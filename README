@@ -1,9 +1,15 @@
 LAST MODIFIED BY: Kara Kundert
 CONTACT AT: kkundert@oberlin.edu
 
+OPERATION: 
+
+	COMPILE: make plotter
+	RUNNING: ./readdata_continuous <data file>
+
 Jan 05, 2011: Fixed up readdata_continuous to produce eps files from plots in
 grace. In order to make a pdf file, use the command:
 
 	ps2pdf plots.eps
+
 
 
