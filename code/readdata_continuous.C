@@ -35,6 +35,7 @@ int main(int argc, char** argv)
 	unsigned int fields;
     long int i = 0;
     int j = 0;
+    int k = 0;
     int ctr = 0;
     int counter=0;
 	int beamnum = 0;
@@ -47,6 +48,10 @@ int main(int argc, char** argv)
 
     struct data_vals *data_ptr;
     data_ptr = (struct data_vals *)data;
+
+    // file variables
+    FILE *datatext;
+    datatext = fopen("spectraldata","w");
 
     // Initialize grace plotting windows
     grace_init();
@@ -70,18 +75,19 @@ int main(int argc, char** argv)
     //make sure we are reading as much data as expected, otherwise might be at eof
     while(headersize==DR_HEAER_SIZE && datasize==next_buffer_size)
     {
+        k = k+1;
     
 
 		/* make sure that we have at least DR_HEAER_SIZE before we read */
 /*
     	do {
-			 fileposition = lseek(fd, 0, SEEK_CUR);
-			 //printf("position is %d\n", fileposition);
-			 filesize = lseek(fd, 0, SEEK_END);
-			 //printf("position is %d\n", filesize);		
-			 lseek(fd, fileposition, SEEK_SET);
-			 //printf("position is now %d\n", lseek(fd, fileposition, SEEK_SET) );				
-			 if( (filesize - fileposition) < DR_HEAER_SIZE ) usleep(100000);    	
+             fileposition = lseek(fd, 0, SEEK_CUR);
+             //printf("position is %d\n", fileposition);
+             filesize = lseek(fd, 0, SEEK_END);
+             //printf("position is %d\n", filesize);		
+             lseek(fd, fileposition, SEEK_SET);
+             //printf("position is now %d\n", lseek(fd, fileposition, SEEK_SET) );				
+             if( (filesize - fileposition) < DR_HEAER_SIZE ) usleep(100000);    	
     	} while ( (filesize - fileposition) < DR_HEAER_SIZE );
 */
     	
@@ -95,13 +101,13 @@ int main(int argc, char** argv)
 		/* make sure that we have at least next_buffer_size before we read */
 /*
     	do {
-			 fileposition = lseek(fd, 0, SEEK_CUR);
-			 //printf("position is %d\n", fileposition);
-			 filesize = lseek(fd, 0, SEEK_END);
-			 //printf("position is %d\n", filesize);		
-			 lseek(fd, fileposition, SEEK_SET);
-			 //printf("position is now %d\n", lseek(fd, fileposition, SEEK_SET) );				
-			 if( (filesize - fileposition) < next_buffer_size ) usleep(100000);    	
+             fileposition = lseek(fd, 0, SEEK_CUR);
+             //printf("position is %d\n", fileposition);
+             filesize = lseek(fd, 0, SEEK_END);
+             //printf("position is %d\n", filesize);		
+             lseek(fd, fileposition, SEEK_SET);
+             //printf("position is now %d\n", lseek(fd, fileposition, SEEK_SET) );				
+             if( (filesize - fileposition) < next_buffer_size ) usleep(100000);    	
     	} while ( (filesize - fileposition) < next_buffer_size );
 */
 
@@ -223,7 +229,10 @@ int main(int argc, char** argv)
 
 	//HACK to fix power spectra off-by-one
 
-	for(i=0;i<4094;i++) spectra.coarse_spectra[i] = spectra.coarse_spectra[i+1];
+	for(i=0;i<4094;i++) {
+            spectra.coarse_spectra[i] = spectra.coarse_spectra[i+1];
+            fprintf(datatext, "%d, %d, %d, %e\n", k, beamnum, i, (double) spectra.coarse_spectra[i]);
+        }
 	
     	plot_beam(&spectra,beamnum);
 		printf("num_records: %d spectra.nuhits %d\n",num_records,spectra.numhits);
@@ -235,6 +244,7 @@ int main(int argc, char** argv)
 		GracePrintf("updateall");
 		GracePrintf("autoscale");
 
+                /*
 		//output pdf via grace
 
 		GracePrintf("HARDCOPY DEVICE \"EPS\"");
@@ -243,17 +253,19 @@ int main(int argc, char** argv)
 		GracePrintf("saveall \"sample.agr\"");
 		GracePrintf("PRINT TO \"%s\"", "plot.eps");
 		GracePrintf("PRINT");
+                */
 
 		if (counter>=140) 
 		{
-			 if (GraceIsOpen()) {
-				  //Flush the output buffer and close Grace 
-				  GraceClose();
-				  // We are done 
-				  exit(EXIT_SUCCESS);
-			 } else {
-				 exit(EXIT_FAILURE);
-			 }
+                    fclose(datatext);
+                    if (GraceIsOpen()) {
+                        //Flush the output buffer and close Grace 
+                        GraceClose();
+                        // We are done 
+                        exit(EXIT_SUCCESS);
+                    } else {
+                        exit(EXIT_FAILURE);
+                    }
 		}
 	}
     }
