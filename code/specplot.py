@@ -4,19 +4,27 @@ import csv as CSV
 import sys as sys
 
 
-if len(sys.argv) != 3:
-    print 'usage: python specplots.py <inputfilename> <outputfilename>'
-    exit()
+#if len(sys.argv) != 3:
+#    print 'usage: python specplots.py <inputfilename> <outputfilename>'
+#    exit()
 
-inputfilename = sys.argv[1]
-outputfilename = sys.argv[2]
-x = []
-y = []
+#inputfilename = sys.argv[1]
+#outputfilename = sys.argv[2]
 
-file = open(inputfilename)
-filesreader = CSV.DictReader(file)
-for each in filesreader:
-    print each
-file.close()
+for inputfilename in sys.argv[1:]:
+    with open(inputfilename) as file:
+        filesreader = CSV.DictReader(file, skipinitialspace=True)
+        x = []
+        y = []
+        for each in filesreader:
+            x.append(int(each['coarsebin']))
+            y.append(float(each['power']))
+            
+        X = numpy.array(x)
+        Y = numpy.array(y)
+        plt.semilogy(X, Y)
 
+plt.xlabel('coarse bin')
+plt.ylabel('power')
+plt.show() 
 
