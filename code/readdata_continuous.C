@@ -32,16 +32,16 @@ int main(int argc, char** argv)
     int blank = 0;
     int event = 0;
     unsigned int pfb_fft_power = 0;
-	unsigned int fields;
+    unsigned int fields;
     long int i = 0;
     int j = 0;
     int k = 0;
     int ctr = 0;
     int counter=0;
-	int beamnum = 0;
+    int beamnum = 0;
 
-	long int fileposition;   //position in input file
-	long int filesize;   //position in input file
+    long int fileposition;   //position in input file
+    long int filesize;   //position in input file
 
     //create buffers
     struct spectral_data spectra;
@@ -51,7 +51,6 @@ int main(int argc, char** argv)
 
     // file variables
     FILE *datatext;
-    datatext = fopen("spectraldata","w");
 
     // Initialize grace plotting windows
     grace_init();
@@ -78,7 +77,7 @@ int main(int argc, char** argv)
         k = k+1;
     
 
-		/* make sure that we have at least DR_HEAER_SIZE before we read */
+        /* make sure that we have at least DR_HEAER_SIZE before we read */
 /*
     	do {
              fileposition = lseek(fd, 0, SEEK_CUR);
@@ -98,7 +97,7 @@ int main(int argc, char** argv)
         next_buffer_size = read_header(header);
         //in case we are at EOF
 
-		/* make sure that we have at least next_buffer_size before we read */
+        /* make sure that we have at least next_buffer_size before we read */
 /*
     	do {
              fileposition = lseek(fd, 0, SEEK_CUR);
@@ -125,20 +124,20 @@ int main(int argc, char** argv)
 
     //======================== TEST FILE DATA DUMP ================
 
-/*
-    FILE *datafile;
-    char dataf[100];
-    sprintf(dataf,"datafiles/datafile%d.dat",counter);
-    datafile = fopen(dataf,"wb");
-    fwrite(data,spectra.numhits,1,(FILE *)datafile);
-    fflush(datafile);
-    fclose(datafile);  
-*/
+    /*
+        FILE *datafile;
+        char dataf[100];
+        sprintf(dataf,"datafiles/datafile%d.dat",counter);
+        datafile = fopen(dataf,"wb");
+        fwrite(data,spectra.numhits,1,(FILE *)datafile);
+        fflush(datafile);
+        fclose(datafile);  
+    */
 
 		
     //==============================================
 
-    num_records = read_data(data,datasize);
+        num_records = read_data(data,datasize);
 	ctr_numhits=0;
 	
 	for(i=0;i< num_records ;i++)
@@ -176,39 +175,39 @@ int main(int argc, char** argv)
 */
 	    //value = (float) (pfb_fft_power);
 
-		//pfb_bin = endianSwap32(pfb_bin);
+            //pfb_bin = endianSwap32(pfb_bin);
             pfb_bin = (pfb_bin + 2048) % 4096;
             fft_bin = ((fft_bin + 16384) % 32768) + pfb_bin*32768;
-		    value = (int) (pfb_fft_power);
-		//printf("%d %d %d %d %d %d\n", pfb_bin, fft_bin, pfb_fft_power, blank, event, over_thresh);
+            value = (int) (pfb_fft_power);
+            //printf("%d %d %d %d %d %d\n", pfb_bin, fft_bin, pfb_fft_power, blank, event, over_thresh);
 
 
 
 	    if(value < 1)
 	    {
-			value = 1;
+                value = 1;
 	    }
 
 	    if(value > maxvalue)
 	    {
-			maxvalue = value;
-			maxbin = fft_bin;
+                maxvalue = value;
+                maxbin = fft_bin;
 	    }
 
 	    //populate data structure
 		
 	    if(fft_bin%16384 != 0)
 	    {
-			spectra.hits[ctr_numhits][0] = value;  
-			spectra.hits[ctr_numhits][1] = fft_bin;  
-			//if(ctr_numhits == 0) printf("value %d fft_bin %d\n", spectra.hits[0][0], spectra.hits[0][1]);
-			ctr_numhits++;
+                spectra.hits[ctr_numhits][0] = value;  
+                spectra.hits[ctr_numhits][1] = fft_bin;  
+                //if(ctr_numhits == 0) printf("value %d fft_bin %d\n", spectra.hits[0][0], spectra.hits[0][1]);
+                ctr_numhits++;
 	    }
 		
 	    //populate coarse bin power
 	    if(fft_bin%16384 == 0)
 	    {
-			spectra.coarse_spectra[pfb_bin] = value;
+                spectra.coarse_spectra[pfb_bin] = value;
 	    }
 
 
@@ -227,46 +226,55 @@ int main(int argc, char** argv)
 
 	counter++;
 
-	//HACK to fix power spectra off-by-one
+        //create file spectraldata and print file header
+        char filename[BUFSIZ];
+        sprintf(filename, "spectraldata%d", beamnum);
+        datatext = fopen(filename,"w");
+        fprintf(datatext, "specnum,beamnum,coarsebin,coarsepower,hitpower,fftbin,hitcoarsebin\n");
+        //fprintf(datatext, "specnum,beamnum,coarsebin,coarsepower\n");
 
+        // fill spectraldata with available data and close file
 	for(i=0;i<4094;i++) {
-            spectra.coarse_spectra[i] = spectra.coarse_spectra[i+1];
-            fprintf(datatext, "%d, %d, %d, %e\n", k, beamnum, i, (double) spectra.coarse_spectra[i]);
+            //spectra.coarse_spectra[i] = spectra.coarse_spectra[i+1];
+            int hitcoarsebin = spectra.hits[i][1]>>15;
+            fprintf(datatext, "%d, %d, %d, %e, %f, %d, %d\n", k, beamnum, pfb_bin, (double) spectra.coarse_spectra[pfb_bin], (double) spectra.hits[i][0], spectra.hits[i][1], hitcoarsebin);
+            //fprintf(datatext, "%d, %d, %d, %e\n", k, beamnum, i, (double) spectra.coarse_spectra[i]);
         }
+        fclose(datatext);
 	
     	plot_beam(&spectra,beamnum);
-		printf("num_records: %d spectra.nuhits %d\n",num_records,spectra.numhits);
-		usleep(200000);
+        printf("num_records: %d spectra.numhits %d\n",num_records,spectra.numhits);
+        usleep(200000);
     
 	if(counter%10 == 0) { 
-		printf("autoscaling...\n");
-		GracePrintf("redraw");
-		GracePrintf("updateall");
-		GracePrintf("autoscale");
+            printf("autoscaling...\n");
+            GracePrintf("redraw");
+            GracePrintf("updateall");
+            GracePrintf("autoscale");
 
-                /*
-		//output pdf via grace
+            /*
+            //output pdf via grace
 
-		GracePrintf("HARDCOPY DEVICE \"EPS\"");
-		printf("start eps create\n");
-		GracePrintf("PAGE SIZE 600, 600");
-		GracePrintf("saveall \"sample.agr\"");
-		GracePrintf("PRINT TO \"%s\"", "plot.eps");
-		GracePrintf("PRINT");
-                */
+            GracePrintf("HARDCOPY DEVICE \"EPS\"");
+            printf("start eps create\n");
+            GracePrintf("PAGE SIZE 600, 600");
+            GracePrintf("saveall \"sample.agr\"");
+            GracePrintf("PRINT TO \"%s\"", "plot.eps");
+            GracePrintf("PRINT");
+            */
 
-		if (counter>=140) 
-		{
-                    fclose(datatext);
-                    if (GraceIsOpen()) {
-                        //Flush the output buffer and close Grace 
-                        GraceClose();
-                        // We are done 
-                        exit(EXIT_SUCCESS);
-                    } else {
-                        exit(EXIT_FAILURE);
-                    }
-		}
+            if (counter>=40) 
+            {
+                if (GraceIsOpen()) {
+                    //Flush the output buffer and close Grace 
+                    GraceClose();
+                    // We are done 
+                    exit(EXIT_SUCCESS);
+                } 
+                else {
+                    exit(EXIT_FAILURE);
+                }
+            }
 	}
     }
 //=====================================================
@@ -291,14 +299,14 @@ int main(int argc, char** argv)
 //===========================================================
 
 
-         if (GraceIsOpen()) {
-                  //Flush the output buffer and close Grace 
-                  GraceClose();
-                  // We are done 
-                  exit(EXIT_SUCCESS);
-         } else {
-                 exit(EXIT_FAILURE);
-         }
+     if (GraceIsOpen()) {
+         //Flush the output buffer and close Grace 
+         GraceClose();
+         // We are done 
+         exit(EXIT_SUCCESS);
+     } else {
+         exit(EXIT_FAILURE);
+     }
 
     //close file
 
