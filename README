@@ -15,5 +15,9 @@ Jan 06, 2012: Modified readdata_continuous to produce a plain text file with
 the data listed in order of spectra number, beam number, coarse bin number, and power
 value. Collects the first 140 spectra and writes them to the file spectraldata.
 
+Jan. 11, 2012: Modified readdata_continuous to include hitpower and fftbin.
+Still stops after limited number of spectra (to save time). specplot.py only
+plots average coarse power. It will be modified shortly to plot individual
+hits.
 
 

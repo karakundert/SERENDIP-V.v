@@ -139,6 +139,13 @@ int main(int argc, char** argv)
 
         num_records = read_data(data,datasize);
 	ctr_numhits=0;
+
+        //create file spectraldata and print file header
+        char filename[BUFSIZ];
+        sprintf(filename, "spectraldata%d", beamnum);
+        datatext = fopen(filename,"w");
+        fprintf(datatext, "specnum,beamnum,coarsebin,coarsepower,hitpower,fftbin\n");
+
 	
 	for(i=0;i< num_records ;i++)
 	{
@@ -210,12 +217,16 @@ int main(int argc, char** argv)
                 spectra.coarse_spectra[pfb_bin] = value;
 	    }
 
+            // fill spectraldata with available data and close file
+            int hitcoarsebin = fft_bin>>15;
+            fprintf(datatext, "%d, %d, %d, %e, %f, %d\n", k, beamnum, pfb_bin, (double) spectra.coarse_spectra[pfb_bin], (double) value, fft_bin);
 
 	    //header is the size of packet in bytes
 		
 	    data_ptr++;
 	    ctr++;		
 	}
+        fclose(datatext);
 
 //	GracePrintf("autoticks");
 //	GracePrintf("redraw");
@@ -226,21 +237,10 @@ int main(int argc, char** argv)
 
 	counter++;
 
-        //create file spectraldata and print file header
-        char filename[BUFSIZ];
-        sprintf(filename, "spectraldata%d", beamnum);
-        datatext = fopen(filename,"w");
-        fprintf(datatext, "specnum,beamnum,coarsebin,coarsepower,hitpower,fftbin,hitcoarsebin\n");
-        //fprintf(datatext, "specnum,beamnum,coarsebin,coarsepower\n");
-
-        // fill spectraldata with available data and close file
-	for(i=0;i<4094;i++) {
-            //spectra.coarse_spectra[i] = spectra.coarse_spectra[i+1];
-            int hitcoarsebin = spectra.hits[i][1]>>15;
-            fprintf(datatext, "%d, %d, %d, %e, %f, %d, %d\n", k, beamnum, pfb_bin, (double) spectra.coarse_spectra[pfb_bin], (double) spectra.hits[i][0], spectra.hits[i][1], hitcoarsebin);
-            //fprintf(datatext, "%d, %d, %d, %e\n", k, beamnum, i, (double) spectra.coarse_spectra[i]);
+        for(i=0;i<4094;i++) {
+            spectra.coarse_spectra[i] = spectra.coarse_spectra[i+1];
         }
-        fclose(datatext);
+
 	
     	plot_beam(&spectra,beamnum);
         printf("num_records: %d spectra.numhits %d\n",num_records,spectra.numhits);
