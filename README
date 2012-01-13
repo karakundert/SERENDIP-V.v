@@ -20,4 +20,7 @@ Still stops after limited number of spectra (to save time). specplot.py only
 plots average coarse power. It will be modified shortly to plot individual
 hits.
 
+Jan. 13, 2012: Made header data structure and began working on function to read
+out header data into said structure.
+
 
