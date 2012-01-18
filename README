@@ -23,4 +23,7 @@ hits.
 Jan. 13, 2012: Made header data structure and began working on function to read
 out header data into said structure.
 
+Jan. 17, 2012: Still working on function to read the header data. Currently
+working on grabbing the header information, which will then be sorted later.
+
 
