@@ -149,6 +149,40 @@ int read_header(char * header)
     return datasize;
 }
 
+
+int read_header_data(char * header, struct setidata * frame)
+{
+    // grab all data available in the header and place in an array to be
+    // cleaned up later. 
+    char buf[4096];
+    char c;
+    int i,j,k;
+    char fields[100][100];
+    i=0;
+    j=0;
+    k=0;
+    for (k=0; k<strlen(header); k++) {
+        // probably can't do this. think of better way to read through header
+        // character-by-character
+        c = header[k];
+        if (c!="\n") {
+            buf[i++] = c;
+        }
+        else {
+            strcpy(fields[j++], buf);
+            i=0;
+        }
+    }
+
+    sscanf(fields[0], "HEADER_SIZE %d", & frame.header_size);
+
+    // TEMP: check that data retrieval is working by comparing equivalent variables
+    printf("headersize %d, frame.header_size %d", headersize, frame.header_size);
+
+    return frame.header_size;
+
+}
+
 /* Initialize GRACE plotting window */
 int grace_init()
 {
