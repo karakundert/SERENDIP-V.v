@@ -4,7 +4,6 @@
 #include <string.h>
 #include <unistd.h>
 #include "setiread.h"
-#include "setidata.h"
 
 #include <errno.h>
 #include <string.h>
@@ -160,29 +159,28 @@ int read_header_data(char * header, struct setidata * frame)
     char buf[4096];
     char c;
     int i,j,k;
-    char fields[100][100];
+    char fields[100][4096];
     i=0;
     j=0;
     k=0;
-    for (k=0; k<strlen(header); k++) {
-        // probably can't do this. think of better way to read through header
-        // character-by-character
+    //for (k=0; k<2048; k++) {
+    do {
         c = header[k];
-        if (c!="\n") {
+        if (c!='\0') {
             buf[i++] = c;
         }
         else {
             strcpy(fields[j++], buf);
             i=0;
         }
-    }
+    } while (strcmp(buf, "END_OF_HEADER"));
 
-    sscanf(fields[0], "HEADER_SIZE %d", & frame.header_size);
+    sscanf(fields[1], "HEADER_SIZE %d", & frame->header_size);
 
     // TEMP: check that data retrieval is working by comparing equivalent variables
-    printf("headersize %d, frame.header_size %d", headersize, frame.header_size);
+    printf("frame.header_size %d\n", frame->header_size);
 
-    return frame.header_size;
+    return frame->header_size;
 
 }
 

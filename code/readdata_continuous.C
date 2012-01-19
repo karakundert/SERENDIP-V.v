@@ -1,5 +1,4 @@
 #include "setiread.h"
-#include "setidata.h"
 
 
 int main(int argc, char** argv)
@@ -21,7 +20,7 @@ int main(int argc, char** argv)
     //plotting variables
     int maxbin = 0;
     int maxvalue = 0;
-    int xmax = BINS;
+    int xmax = (int) BINS;
 
     //data values
     int finebin = 0 ;
@@ -50,6 +49,7 @@ int main(int argc, char** argv)
     struct data_vals *data_ptr;
     data_ptr = (struct data_vals *)data;
 
+    //create header structure
     int header_data_test;
     struct setidata frame;
 
@@ -99,10 +99,8 @@ int main(int argc, char** argv)
 
 
         next_buffer_size = read_header(header);
+        header_data_test = read_header_data(header, &frame);
         //in case we are at EOF
-        
-        header_data_test = read_header_data(header, frame);
-        printf("header size: %d, %d", header_data_size, headersize);
 
         /* make sure that we have at least next_buffer_size before we read */
 /*
