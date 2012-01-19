@@ -1,4 +1,5 @@
 #include "setiread.h"
+#include "setidata.h"
 
 
 int main(int argc, char** argv)
@@ -49,6 +50,9 @@ int main(int argc, char** argv)
     struct data_vals *data_ptr;
     data_ptr = (struct data_vals *)data;
 
+    int header_data_test;
+    struct setidata frame;
+
     // file variables
     FILE *datatext;
 
@@ -96,6 +100,9 @@ int main(int argc, char** argv)
 
         next_buffer_size = read_header(header);
         //in case we are at EOF
+        
+        header_data_test = read_header_data(header, frame);
+        printf("header size: %d, %d", header_data_size, headersize);
 
         /* make sure that we have at least next_buffer_size before we read */
 /*

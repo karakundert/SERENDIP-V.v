@@ -4,6 +4,7 @@
 #include <string.h>
 #include <unistd.h>
 #include "setiread.h"
+#include "setidata.h"
 
 #include <errno.h>
 #include <string.h>
@@ -12,6 +13,8 @@
 #include <netinet/in.h>
 #include <netdb.h>
 #include <arpa/inet.h>
+
+
 
 long read_data(char * data, int datasize)
 {
