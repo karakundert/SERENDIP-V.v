@@ -170,9 +170,12 @@ int read_header_data(char * header, struct setidata * frame)
             buf[i++] = c;
         }
         else {
+            buf[i++] = c;
+            printf("<<<<%s>>>>\n", buf);
             strcpy(fields[j++], buf);
             i=0;
         }
+        k++;
     } while (strcmp(buf, "END_OF_HEADER"));
 
     sscanf(fields[1], "HEADER_SIZE %d", & frame->header_size);
