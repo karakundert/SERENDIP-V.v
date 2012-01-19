@@ -176,7 +176,7 @@ int read_header_data(char * header, struct setidata * frame)
             i=0;
         }
         k++;
-    } while (strcmp(buf, "END_OF_HEADER"));
+    } while (strncmp(buf, "END_OF_HEADER", 13));
 
     sscanf(fields[1], "HEADER_SIZE %d", & frame->header_size);
 
