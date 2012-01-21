@@ -64,6 +64,7 @@ struct setidata {
     // SCRAM data goes here
     long agc_systime;
     double agc_az;
+    double agc_za;
     long agc_time;
     long alfashm_systime;
     long alfashm_alfafirstbias;

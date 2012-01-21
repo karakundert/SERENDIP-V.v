@@ -163,25 +163,56 @@ int read_header_data(char * header, struct setidata * frame)
     i=0;
     j=0;
     k=0;
-    //for (k=0; k<2048; k++) {
     do {
         c = header[k];
         if (c!='\0') {
             buf[i++] = c;
         }
         else {
-            buf[i++] = c;
-            printf("<<<<%s>>>>\n", buf);
-            strcpy(fields[j++], buf);
-            i=0;
+            if (i!=0) {
+                buf[i] = c;
+                strcpy(fields[j++], buf);
+                i=0;
+            }
         }
         k++;
     } while (strncmp(buf, "END_OF_HEADER", 13));
 
     sscanf(fields[1], "HEADER_SIZE %d", & frame->header_size);
+    sscanf(fields[2], "DATA_SIZE %d", & frame->data_size);
+    sscanf(fields[3], "NAME %s", & frame->name);
+    sscanf(fields[4], "DSI %d", & frame->dsi);
+    sscanf(fields[5], "FRAMESEQ %d", & frame->frameseq);
+    sscanf(fields[6], "DATASEQ %d", & frame->dataseq);
+    sscanf(fields[7], "IDLECOUNT %d", & frame->idlecount);
+    sscanf(fields[8], "MISSED %d", & frame->missed);
+    sscanf(fields[9], "AST %d", & frame->ast);
+    sscanf(fields[12], "RECEIVER %s", & frame->receiver);
+    sscanf(fields[13], "SAMPLERATE %f", & frame->samplerate);
+    sscanf(fields[14], "VER %f", & frame->ver);
+    sscanf(fields[15], "SCRAM AGC AGC_SysTime %d AGC_Az %f AGC_Za %f AGC_Time %d", & frame->agc_systime, & frame->agc_az, & frame->agc_za, & frame->agc_time);
+    sscanf(fields[16], "SCRAM ALFASHM ALFASHM_SysTime %d ALFASHM_AlfaFirstBias %d ALFASHM_AlfaSecondBias %d ALFASHM_AlfaMotorPosition %f", & frame->alfashm_systime, & frame->alfashm_alfafirstbias, & frame->alfashm_alfasecondbias, & frame->alfashm_alfamotorposition);
+    sscanf(fields[17], "SCRAM IF1 IF1_SysTime %d IF1_synI_freqHz_0 %f IF1_synI_ampDB_0 %d IF1_rfFreq %f IF1_if1FrqMhz %f IF1_alfaFb %d", & frame->if1_systime, & frame->if1_syni_freqhz_0, & frame->if1_syni_ampdb_0, & frame->if1_rffreq, & frame->if1_if1frqmhz, & frame->if1_alfafb);
+    sscanf(fields[18], "SCRAM IF2 IF2_SysTime %d IF2_useAlfa %d", & frame->if2_systime, & frame->if2_usealfa);
+    sscanf(fields[19], "SCRAM TT TT_SysTime %d TT_TurretEncoder %d TT_TurretDegrees %f", & frame->tt_systime, & frame->tt_turretencoder, & frame->tt_turretdegrees);
+    sscanf(fields[40], "min_synth_freq %d", & frame->min_synth_freq);
+    sscanf(fields[41], "max_synth_freq %d", & frame->max_synth_freq);
+    sscanf(fields[42], "min_rec_freq %d", & frame->min_rec_freq);
+    sscanf(fields[43], "max_rec_freq %d", & frame->max_rec_freq);
+    sscanf(fields[44], "filtered_min_rec_freq %d", & frame->filtered_min_rec_freq);
+    sscanf(fields[45], "filtered_max_rec_freq %d", & frame->filtered_max_rec_freq);
+    sscanf(fields[48], "num_m_in_d %d", & frame->num_m_in_d);
+    sscanf(fields[50], "num_diskbufs %d", & frame->num_diskbufs);
+    sscanf(fields[51], "synth_model %s", & frame->synth_model);
+    sscanf(fields[54], "turret_degrees_alfa %f", & frame->turret_degrees_alfa);
+    sscanf(fields[55], "turret_degrees_tolerance %d", & frame->turret_degrees_tolerance);
+    
+    
 
     // TEMP: check that data retrieval is working by comparing equivalent variables
     printf("frame.header_size %d\n", frame->header_size);
+    printf("frame.receiver %s\n", frame->receiver);
+    printf("frame.turret_degrees_alfa %f\n", frame->turret_degrees_alfa);
 
     return frame->header_size;
 
