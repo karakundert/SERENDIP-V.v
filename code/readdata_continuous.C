@@ -268,18 +268,6 @@ int main(int argc, char** argv)
             GracePrintf("PRINT");
             */
 
-            if (counter>=40) 
-            {
-                if (GraceIsOpen()) {
-                    //Flush the output buffer and close Grace 
-                    GraceClose();
-                    // We are done 
-                    exit(EXIT_SUCCESS);
-                } 
-                else {
-                    exit(EXIT_FAILURE);
-                }
-            }
 	}
     }
 //=====================================================

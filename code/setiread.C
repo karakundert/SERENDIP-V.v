@@ -210,9 +210,12 @@ int read_header_data(char * header, struct setidata * frame)
     
 
     // TEMP: check that data retrieval is working by comparing equivalent variables
-    printf("frame.header_size %d\n", frame->header_size);
+    printf("frame.agc_systime %d\n", frame->agc_systime);
+    printf("frame.agc_az %d\n", frame->agc_az);
+    printf("frame.agc_za %d\n", frame->agc_za);
     printf("frame.receiver %s\n", frame->receiver);
-    printf("frame.turret_degrees_alfa %f\n", frame->turret_degrees_alfa);
+    printf("frame.min_synth_freq %s\n", frame->min_synth_freq);
+    printf("frame.samplerate %f\n", frame->samplerate);
 
     return frame->header_size;
 
