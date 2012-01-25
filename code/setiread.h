@@ -61,10 +61,11 @@ struct setidata {
     char receiver[255];
     double samplerate;
     double ver;
-    // SCRAM data goes here
     long agc_systime;
     double agc_az;
     double agc_za;
+    double ra;
+    double dec;
     long agc_time;
     long alfashm_systime;
     long alfashm_alfafirstbias;
