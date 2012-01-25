@@ -1,0 +1,293 @@
+K 25
+svn:wc:ra_dav:version-url
+V 42
+/svn/!svn/ver/1077/setilib/AO_code/aocoord
+END
+isLeapYear.c
+K 25
+svn:wc:ra_dav:version-url
+V 52
+/svn/!svn/ver/5/setilib/AO_code/aocoord/isLeapYear.c
+END
+hms3_rad.c
+K 25
+svn:wc:ra_dav:version-url
+V 50
+/svn/!svn/ver/5/setilib/AO_code/aocoord/hms3_rad.c
+END
+rad_hms3.c
+K 25
+svn:wc:ra_dav:version-url
+V 50
+/svn/!svn/ver/5/setilib/AO_code/aocoord/rad_hms3.c
+END
+fmtHmsD.c
+K 25
+svn:wc:ra_dav:version-url
+V 49
+/svn/!svn/ver/5/setilib/AO_code/aocoord/fmtHmsD.c
+END
+rotationX_M.c
+K 25
+svn:wc:ra_dav:version-url
+V 53
+/svn/!svn/ver/5/setilib/AO_code/aocoord/rotationX_M.c
+END
+precNutInit.c
+K 25
+svn:wc:ra_dav:version-url
+V 53
+/svn/!svn/ver/5/setilib/AO_code/aocoord/precNutInit.c
+END
+rotationY_M.c
+K 25
+svn:wc:ra_dav:version-url
+V 53
+/svn/!svn/ver/5/setilib/AO_code/aocoord/rotationY_M.c
+END
+fmtSMToHmsD.c
+K 25
+svn:wc:ra_dav:version-url
+V 53
+/svn/!svn/ver/5/setilib/AO_code/aocoord/fmtSMToHmsD.c
+END
+rotationZ_M.c
+K 25
+svn:wc:ra_dav:version-url
+V 53
+/svn/!svn/ver/5/setilib/AO_code/aocoord/rotationZ_M.c
+END
+azzaToRaDec.c
+K 25
+svn:wc:ra_dav:version-url
+V 55
+/svn/!svn/ver/161/setilib/AO_code/aocoord/azzaToRaDec.c
+END
+testazzatoradec.c
+K 25
+svn:wc:ra_dav:version-url
+V 59
+/svn/!svn/ver/161/setilib/AO_code/aocoord/testazzatoradec.c
+END
+MV3D_Mult.c
+K 25
+svn:wc:ra_dav:version-url
+V 51
+/svn/!svn/ver/5/setilib/AO_code/aocoord/MV3D_Mult.c
+END
+truncDtoI.c
+K 25
+svn:wc:ra_dav:version-url
+V 51
+/svn/!svn/ver/5/setilib/AO_code/aocoord/truncDtoI.c
+END
+obsPosInp.c
+K 25
+svn:wc:ra_dav:version-url
+V 52
+/svn/!svn/ver/85/setilib/AO_code/aocoord/obsPosInp.c
+END
+azzaToRaDec.h
+K 25
+svn:wc:ra_dav:version-url
+V 55
+/svn/!svn/ver/161/setilib/AO_code/aocoord/azzaToRaDec.h
+END
+setSign.c
+K 25
+svn:wc:ra_dav:version-url
+V 49
+/svn/!svn/ver/5/setilib/AO_code/aocoord/setSign.c
+END
+M3D_Transpose.c
+K 25
+svn:wc:ra_dav:version-url
+V 55
+/svn/!svn/ver/5/setilib/AO_code/aocoord/M3D_Transpose.c
+END
+gregToMjd.c
+K 25
+svn:wc:ra_dav:version-url
+V 51
+/svn/!svn/ver/5/setilib/AO_code/aocoord/gregToMjd.c
+END
+gregToMjdDno.c
+K 25
+svn:wc:ra_dav:version-url
+V 54
+/svn/!svn/ver/5/setilib/AO_code/aocoord/gregToMjdDno.c
+END
+mjdToJulDate.c
+K 25
+svn:wc:ra_dav:version-url
+V 54
+/svn/!svn/ver/5/setilib/AO_code/aocoord/mjdToJulDate.c
+END
+OFF.utcToUt1.dat
+K 25
+svn:wc:ra_dav:version-url
+V 59
+/svn/!svn/ver/1077/setilib/AO_code/aocoord/OFF.utcToUt1.dat
+END
+fmtDms.c
+K 25
+svn:wc:ra_dav:version-url
+V 48
+/svn/!svn/ver/5/setilib/AO_code/aocoord/fmtDms.c
+END
+VV3D_Sub.c
+K 25
+svn:wc:ra_dav:version-url
+V 50
+/svn/!svn/ver/5/setilib/AO_code/aocoord/VV3D_Sub.c
+END
+azzaToRaDecInit.c
+K 25
+svn:wc:ra_dav:version-url
+V 57
+/svn/!svn/ver/5/setilib/AO_code/aocoord/azzaToRaDecInit.c
+END
+haToAzEl_V.c
+K 25
+svn:wc:ra_dav:version-url
+V 52
+/svn/!svn/ver/5/setilib/AO_code/aocoord/haToAzEl_V.c
+END
+Makefile
+K 25
+svn:wc:ra_dav:version-url
+V 49
+/svn/!svn/ver/85/setilib/AO_code/aocoord/Makefile
+END
+azElToHa_V.c
+K 25
+svn:wc:ra_dav:version-url
+V 52
+/svn/!svn/ver/5/setilib/AO_code/aocoord/azElToHa_V.c
+END
+aberAnnual_V.c
+K 25
+svn:wc:ra_dav:version-url
+V 54
+/svn/!svn/ver/5/setilib/AO_code/aocoord/aberAnnual_V.c
+END
+anglesToVec3.c
+K 25
+svn:wc:ra_dav:version-url
+V 54
+/svn/!svn/ver/5/setilib/AO_code/aocoord/anglesToVec3.c
+END
+vec3ToAngles.c
+K 25
+svn:wc:ra_dav:version-url
+V 54
+/svn/!svn/ver/5/setilib/AO_code/aocoord/vec3ToAngles.c
+END
+mathCon.h
+K 25
+svn:wc:ra_dav:version-url
+V 50
+/svn/!svn/ver/85/setilib/AO_code/aocoord/mathCon.h
+END
+dmToDayNo.c
+K 25
+svn:wc:ra_dav:version-url
+V 51
+/svn/!svn/ver/5/setilib/AO_code/aocoord/dmToDayNo.c
+END
+secMid_hms3.c
+K 25
+svn:wc:ra_dav:version-url
+V 53
+/svn/!svn/ver/5/setilib/AO_code/aocoord/secMid_hms3.c
+END
+MM3D_Mult.c
+K 25
+svn:wc:ra_dav:version-url
+V 51
+/svn/!svn/ver/5/setilib/AO_code/aocoord/MM3D_Mult.c
+END
+precJ2ToDate_M.c
+K 25
+svn:wc:ra_dav:version-url
+V 56
+/svn/!svn/ver/5/setilib/AO_code/aocoord/precJ2ToDate_M.c
+END
+OFF.obsPosition.dat
+K 25
+svn:wc:ra_dav:version-url
+V 62
+/svn/!svn/ver/1077/setilib/AO_code/aocoord/OFF.obsPosition.dat
+END
+V3D_Normalize.c
+K 25
+svn:wc:ra_dav:version-url
+V 55
+/svn/!svn/ver/5/setilib/AO_code/aocoord/V3D_Normalize.c
+END
+ut1ToLmst.c
+K 25
+svn:wc:ra_dav:version-url
+V 51
+/svn/!svn/ver/5/setilib/AO_code/aocoord/ut1ToLmst.c
+END
+nutation_M.c
+K 25
+svn:wc:ra_dav:version-url
+V 52
+/svn/!svn/ver/5/setilib/AO_code/aocoord/nutation_M.c
+END
+utcInfoInp.c
+K 25
+svn:wc:ra_dav:version-url
+V 53
+/svn/!svn/ver/85/setilib/AO_code/aocoord/utcInfoInp.c
+END
+haToRaDec_V.c
+K 25
+svn:wc:ra_dav:version-url
+V 53
+/svn/!svn/ver/5/setilib/AO_code/aocoord/haToRaDec_V.c
+END
+precNut.c
+K 25
+svn:wc:ra_dav:version-url
+V 49
+/svn/!svn/ver/5/setilib/AO_code/aocoord/precNut.c
+END
+fmtRdToDms.c
+K 25
+svn:wc:ra_dav:version-url
+V 52
+/svn/!svn/ver/5/setilib/AO_code/aocoord/fmtRdToDms.c
+END
+utcToUt1.c
+K 25
+svn:wc:ra_dav:version-url
+V 50
+/svn/!svn/ver/5/setilib/AO_code/aocoord/utcToUt1.c
+END
+fmtRdToHmsD.c
+K 25
+svn:wc:ra_dav:version-url
+V 53
+/svn/!svn/ver/5/setilib/AO_code/aocoord/fmtRdToHmsD.c
+END
+dms3_rad.c
+K 25
+svn:wc:ra_dav:version-url
+V 50
+/svn/!svn/ver/5/setilib/AO_code/aocoord/dms3_rad.c
+END
+rad_dms3.c
+K 25
+svn:wc:ra_dav:version-url
+V 50
+/svn/!svn/ver/5/setilib/AO_code/aocoord/rad_dms3.c
+END
+meanEqToEcl_A.c
+K 25
+svn:wc:ra_dav:version-url
+V 55
+/svn/!svn/ver/5/setilib/AO_code/aocoord/meanEqToEcl_A.c
+END
