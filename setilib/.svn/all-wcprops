@@ -1,0 +1,83 @@
+K 25
+svn:wc:ra_dav:version-url
+V 26
+/svn/!svn/ver/1208/setilib
+END
+configure.ac
+K 25
+svn:wc:ra_dav:version-url
+V 38
+/svn/!svn/ver/406/setilib/configure.ac
+END
+seti_config.h.in
+K 25
+svn:wc:ra_dav:version-url
+V 43
+/svn/!svn/ver/1196/setilib/seti_config.h.in
+END
+depcomp
+K 25
+svn:wc:ra_dav:version-url
+V 31
+/svn/!svn/ver/5/setilib/depcomp
+END
+_autosetup
+K 25
+svn:wc:ra_dav:version-url
+V 34
+/svn/!svn/ver/5/setilib/_autosetup
+END
+COPYING
+K 25
+svn:wc:ra_dav:version-url
+V 31
+/svn/!svn/ver/5/setilib/COPYING
+END
+COPYRIGHT
+K 25
+svn:wc:ra_dav:version-url
+V 33
+/svn/!svn/ver/5/setilib/COPYRIGHT
+END
+Makefile.am
+K 25
+svn:wc:ra_dav:version-url
+V 38
+/svn/!svn/ver/1196/setilib/Makefile.am
+END
+missing
+K 25
+svn:wc:ra_dav:version-url
+V 31
+/svn/!svn/ver/5/setilib/missing
+END
+config.guess
+K 25
+svn:wc:ra_dav:version-url
+V 36
+/svn/!svn/ver/5/setilib/config.guess
+END
+checkin_notes
+K 25
+svn:wc:ra_dav:version-url
+V 37
+/svn/!svn/ver/5/setilib/checkin_notes
+END
+config.sub
+K 25
+svn:wc:ra_dav:version-url
+V 34
+/svn/!svn/ver/5/setilib/config.sub
+END
+ltmain.sh
+K 25
+svn:wc:ra_dav:version-url
+V 33
+/svn/!svn/ver/5/setilib/ltmain.sh
+END
+install-sh
+K 25
+svn:wc:ra_dav:version-url
+V 34
+/svn/!svn/ver/5/setilib/install-sh
+END

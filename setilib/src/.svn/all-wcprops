@@ -1,0 +1,101 @@
+K 25
+svn:wc:ra_dav:version-url
+V 30
+/svn/!svn/ver/1208/setilib/src
+END
+seti_rfi_null.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 48
+/svn/!svn/ver/1131/setilib/src/seti_rfi_null.cpp
+END
+seti_rfi_zone.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 48
+/svn/!svn/ver/1130/setilib/src/seti_rfi_zone.cpp
+END
+seti_signal.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 46
+/svn/!svn/ver/1131/setilib/src/seti_signal.cpp
+END
+seti_rfi.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 43
+/svn/!svn/ver/1131/setilib/src/seti_rfi.cpp
+END
+seti_aoutils.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 46
+/svn/!svn/ver/168/setilib/src/seti_aoutils.cpp
+END
+seti_tel.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 40
+/svn/!svn/ver/5/setilib/src/seti_tel.cpp
+END
+seti_healpix.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 47
+/svn/!svn/ver/1132/setilib/src/seti_healpix.cpp
+END
+seti_dr2filter.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 48
+/svn/!svn/ver/406/setilib/src/seti_dr2filter.cpp
+END
+seti_time.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 43
+/svn/!svn/ver/579/setilib/src/seti_time.cpp
+END
+seti_cfg.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 40
+/svn/!svn/ver/5/setilib/src/seti_cfg.cpp
+END
+mtrand.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 40
+/svn/!svn/ver/407/setilib/src/mtrand.cpp
+END
+seti_synthetic_data.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 54
+/svn/!svn/ver/1196/setilib/src/seti_synthetic_data.cpp
+END
+seti_rfi_staff.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 49
+/svn/!svn/ver/1142/setilib/src/seti_rfi_staff.cpp
+END
+seti_doppler.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 44
+/svn/!svn/ver/5/setilib/src/seti_doppler.cpp
+END
+seti_coord.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 45
+/svn/!svn/ver/1072/setilib/src/seti_coord.cpp
+END
+seti_dr2utils.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 48
+/svn/!svn/ver/1208/setilib/src/seti_dr2utils.cpp
+END

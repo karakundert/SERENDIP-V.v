@@ -1,0 +1,113 @@
+K 25
+svn:wc:ra_dav:version-url
+V 31
+/svn/!svn/ver/1196/setilib/demo
+END
+print_dr2_data.cc
+K 25
+svn:wc:ra_dav:version-url
+V 48
+/svn/!svn/ver/736/setilib/demo/print_dr2_data.cc
+END
+print_dr2_headers.cc
+K 25
+svn:wc:ra_dav:version-url
+V 52
+/svn/!svn/ver/1126/setilib/demo/print_dr2_headers.cc
+END
+inputs_to_channels.cc
+K 25
+svn:wc:ra_dav:version-url
+V 52
+/svn/!svn/ver/317/setilib/demo/inputs_to_channels.cc
+END
+structure_dr2_data.cc
+K 25
+svn:wc:ra_dav:version-url
+V 52
+/svn/!svn/ver/171/setilib/demo/structure_dr2_data.cc
+END
+precess.cc
+K 25
+svn:wc:ra_dav:version-url
+V 41
+/svn/!svn/ver/171/setilib/demo/precess.cc
+END
+compare_zenaz_corrections.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 61
+/svn/!svn/ver/1074/setilib/demo/compare_zenaz_corrections.cpp
+END
+checkAndBlank.cc
+K 25
+svn:wc:ra_dav:version-url
+V 47
+/svn/!svn/ver/319/setilib/demo/checkAndBlank.cc
+END
+README
+K 25
+svn:wc:ra_dav:version-url
+V 35
+/svn/!svn/ver/5/setilib/demo/README
+END
+print_vgc_values.cc
+K 25
+svn:wc:ra_dav:version-url
+V 51
+/svn/!svn/ver/1196/setilib/demo/print_vgc_values.cc
+END
+printSignals.cc
+K 25
+svn:wc:ra_dav:version-url
+V 46
+/svn/!svn/ver/299/setilib/demo/printSignals.cc
+END
+signals_by_tape_id_demo.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 58
+/svn/!svn/ver/207/setilib/demo/signals_by_tape_id_demo.cpp
+END
+signals_by_id_range_demo.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 58
+/svn/!svn/ver/17/setilib/demo/signals_by_id_range_demo.cpp
+END
+demo_seti_time.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 47
+/svn/!svn/ver/5/setilib/demo/demo_seti_time.cpp
+END
+Makefile.am
+K 25
+svn:wc:ra_dav:version-url
+V 43
+/svn/!svn/ver/1127/setilib/demo/Makefile.am
+END
+precess2.cc
+K 25
+svn:wc:ra_dav:version-url
+V 42
+/svn/!svn/ver/194/setilib/demo/precess2.cc
+END
+dr2_stub_filter.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 50
+/svn/!svn/ver/433/setilib/demo/dr2_stub_filter.cpp
+END
+show_radar_blanker.cc
+K 25
+svn:wc:ra_dav:version-url
+V 52
+/svn/!svn/ver/171/setilib/demo/show_radar_blanker.cc
+END
+format_dr2_data.cc
+K 25
+svn:wc:ra_dav:version-url
+V 49
+/svn/!svn/ver/171/setilib/demo/format_dr2_data.cc
+END

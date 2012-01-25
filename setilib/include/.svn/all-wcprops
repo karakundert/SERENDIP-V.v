@@ -1,0 +1,149 @@
+K 25
+svn:wc:ra_dav:version-url
+V 34
+/svn/!svn/ver/1200/setilib/include
+END
+seti_doppler.h
+K 25
+svn:wc:ra_dav:version-url
+V 46
+/svn/!svn/ver/5/setilib/include/seti_doppler.h
+END
+seti_coord.h
+K 25
+svn:wc:ra_dav:version-url
+V 47
+/svn/!svn/ver/1132/setilib/include/seti_coord.h
+END
+setilib.h
+K 25
+svn:wc:ra_dav:version-url
+V 44
+/svn/!svn/ver/1131/setilib/include/setilib.h
+END
+seti_dr2utils.h
+K 25
+svn:wc:ra_dav:version-url
+V 50
+/svn/!svn/ver/1200/setilib/include/seti_dr2utils.h
+END
+seti_rfi_null.h
+K 25
+svn:wc:ra_dav:version-url
+V 49
+/svn/!svn/ver/736/setilib/include/seti_rfi_null.h
+END
+seti_rfi_zone.h
+K 25
+svn:wc:ra_dav:version-url
+V 49
+/svn/!svn/ver/736/setilib/include/seti_rfi_zone.h
+END
+seti_signal.h
+K 25
+svn:wc:ra_dav:version-url
+V 48
+/svn/!svn/ver/1131/setilib/include/seti_signal.h
+END
+truncated_add.h
+K 25
+svn:wc:ra_dav:version-url
+V 49
+/svn/!svn/ver/757/setilib/include/truncated_add.h
+END
+seti_rfi.h
+K 25
+svn:wc:ra_dav:version-url
+V 45
+/svn/!svn/ver/1131/setilib/include/seti_rfi.h
+END
+seti_aoutils.h
+K 25
+svn:wc:ra_dav:version-url
+V 46
+/svn/!svn/ver/5/setilib/include/seti_aoutils.h
+END
+seti_rfi_algo.h
+K 25
+svn:wc:ra_dav:version-url
+V 49
+/svn/!svn/ver/736/setilib/include/seti_rfi_algo.h
+END
+seti_db_queries.h
+K 25
+svn:wc:ra_dav:version-url
+V 52
+/svn/!svn/ver/1196/setilib/include/seti_db_queries.h
+END
+seti_tel.h
+K 25
+svn:wc:ra_dav:version-url
+V 44
+/svn/!svn/ver/317/setilib/include/seti_tel.h
+END
+smooth.h
+K 25
+svn:wc:ra_dav:version-url
+V 40
+/svn/!svn/ver/5/setilib/include/smooth.h
+END
+least_squares.h
+K 25
+svn:wc:ra_dav:version-url
+V 47
+/svn/!svn/ver/5/setilib/include/least_squares.h
+END
+seti_healpix.h
+K 25
+svn:wc:ra_dav:version-url
+V 49
+/svn/!svn/ver/1132/setilib/include/seti_healpix.h
+END
+seti_dr2filter.h
+K 25
+svn:wc:ra_dav:version-url
+V 51
+/svn/!svn/ver/1193/setilib/include/seti_dr2filter.h
+END
+seti_time.h
+K 25
+svn:wc:ra_dav:version-url
+V 43
+/svn/!svn/ver/5/setilib/include/seti_time.h
+END
+seti_cfg.h
+K 25
+svn:wc:ra_dav:version-url
+V 42
+/svn/!svn/ver/5/setilib/include/seti_cfg.h
+END
+seti_byteorder.h
+K 25
+svn:wc:ra_dav:version-url
+V 48
+/svn/!svn/ver/5/setilib/include/seti_byteorder.h
+END
+Makefile.am
+K 25
+svn:wc:ra_dav:version-url
+V 45
+/svn/!svn/ver/699/setilib/include/Makefile.am
+END
+mtrand.h
+K 25
+svn:wc:ra_dav:version-url
+V 42
+/svn/!svn/ver/407/setilib/include/mtrand.h
+END
+seti_rfi_staff.h
+K 25
+svn:wc:ra_dav:version-url
+V 51
+/svn/!svn/ver/1141/setilib/include/seti_rfi_staff.h
+END
+seti_synthetic_data.h
+K 25
+svn:wc:ra_dav:version-url
+V 55
+/svn/!svn/ver/699/setilib/include/seti_synthetic_data.h
+END
