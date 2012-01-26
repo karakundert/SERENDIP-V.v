@@ -50,7 +50,6 @@ int main(int argc, char** argv)
     data_ptr = (struct data_vals *)data;
 
     //create header structure
-    int header_data_test;
     struct setidata frame;
 
     // file variables
@@ -99,7 +98,7 @@ int main(int argc, char** argv)
 
 
         next_buffer_size = read_header(header);
-        header_data_test = read_header_data(header, &frame);
+        read_header_data(header, &frame);
         //in case we are at EOF
 
         /* make sure that we have at least next_buffer_size before we read */

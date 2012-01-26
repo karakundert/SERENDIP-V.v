@@ -1,0 +1,155 @@
+K 25
+svn:wc:ra_dav:version-url
+V 29
+/svn/!svn/ver/1201/seti_boinc
+END
+configure.ac.public
+K 25
+svn:wc:ra_dav:version-url
+V 48
+/svn/!svn/ver/110/seti_boinc/configure.ac.public
+END
+AUTHORS
+K 25
+svn:wc:ra_dav:version-url
+V 36
+/svn/!svn/ver/110/seti_boinc/AUTHORS
+END
+sah_config.h
+K 25
+svn:wc:ra_dav:version-url
+V 41
+/svn/!svn/ver/633/seti_boinc/sah_config.h
+END
+depcomp
+K 25
+svn:wc:ra_dav:version-url
+V 36
+/svn/!svn/ver/110/seti_boinc/depcomp
+END
+_autosetup
+K 25
+svn:wc:ra_dav:version-url
+V 39
+/svn/!svn/ver/622/seti_boinc/_autosetup
+END
+compile
+K 25
+svn:wc:ra_dav:version-url
+V 36
+/svn/!svn/ver/110/seti_boinc/compile
+END
+config.guess
+K 25
+svn:wc:ra_dav:version-url
+V 41
+/svn/!svn/ver/110/seti_boinc/config.guess
+END
+Graphics.Readme
+K 25
+svn:wc:ra_dav:version-url
+V 44
+/svn/!svn/ver/110/seti_boinc/Graphics.Readme
+END
+config.sub
+K 25
+svn:wc:ra_dav:version-url
+V 39
+/svn/!svn/ver/110/seti_boinc/config.sub
+END
+ltmain.sh
+K 25
+svn:wc:ra_dav:version-url
+V 38
+/svn/!svn/ver/110/seti_boinc/ltmain.sh
+END
+README
+K 25
+svn:wc:ra_dav:version-url
+V 35
+/svn/!svn/ver/110/seti_boinc/README
+END
+nightly-tarball
+K 25
+svn:wc:ra_dav:version-url
+V 44
+/svn/!svn/ver/799/seti_boinc/nightly-tarball
+END
+export-tarball
+K 25
+svn:wc:ra_dav:version-url
+V 43
+/svn/!svn/ver/110/seti_boinc/export-tarball
+END
+Makefile.incl
+K 25
+svn:wc:ra_dav:version-url
+V 42
+/svn/!svn/ver/163/seti_boinc/Makefile.incl
+END
+configure.ac
+K 25
+svn:wc:ra_dav:version-url
+V 41
+/svn/!svn/ver/890/seti_boinc/configure.ac
+END
+COPYING
+K 25
+svn:wc:ra_dav:version-url
+V 36
+/svn/!svn/ver/110/seti_boinc/COPYING
+END
+COPYRIGHT
+K 25
+svn:wc:ra_dav:version-url
+V 38
+/svn/!svn/ver/110/seti_boinc/COPYRIGHT
+END
+missing
+K 25
+svn:wc:ra_dav:version-url
+V 36
+/svn/!svn/ver/110/seti_boinc/missing
+END
+Makefile.am
+K 25
+svn:wc:ra_dav:version-url
+V 40
+/svn/!svn/ver/633/seti_boinc/Makefile.am
+END
+CheckResult
+K 25
+svn:wc:ra_dav:version-url
+V 40
+/svn/!svn/ver/110/seti_boinc/CheckResult
+END
+hosts.make
+K 25
+svn:wc:ra_dav:version-url
+V 39
+/svn/!svn/ver/110/seti_boinc/hosts.make
+END
+checkin_notes
+K 25
+svn:wc:ra_dav:version-url
+V 42
+/svn/!svn/ver/867/seti_boinc/checkin_notes
+END
+README_MAC
+K 25
+svn:wc:ra_dav:version-url
+V 39
+/svn/!svn/ver/110/seti_boinc/README_MAC
+END
+trim_sources
+K 25
+svn:wc:ra_dav:version-url
+V 41
+/svn/!svn/ver/110/seti_boinc/trim_sources
+END
+install-sh
+K 25
+svn:wc:ra_dav:version-url
+V 39
+/svn/!svn/ver/110/seti_boinc/install-sh
+END

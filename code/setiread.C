@@ -6,7 +6,6 @@
 #include <string.h>
 #include <unistd.h>
 #include "setiread.h"
-#include "setilib.h"
 
 #include <errno.h>
 #include <string.h>
@@ -17,7 +16,7 @@
 #include <arpa/inet.h>
 
 extern "C" {
-#include "azzaToRaSec.h"
+#include <azzaToRaDec.h>
 }
 
 long read_data(char * data, int datasize)
@@ -226,7 +225,7 @@ int read_header_data(char * header, struct setidata * frame)
 
 }
 
-/*
+
 void seti_AzZaToRaDec(double Az, double Za, double coord_time, double &Ra, double &Dec) {
 //=======================================================
 // This calls AO Phil's code.
@@ -268,7 +267,7 @@ void seti_AzZaToRaDec(double Az, double Za, double coord_time, double &Ra, doubl
     while (Ra < 0) Ra += 24;
     Ra = fmod(Ra,24);
 }
-*/
+
 
 
 /* Initialize GRACE plotting window */
