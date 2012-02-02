@@ -61,6 +61,7 @@ int main(int argc, char** argv)
 
     // create SQL structures
     char sqlquery[1024];
+    char hitsquery[1024];
 
     // file variables
     FILE *datatext;
@@ -238,6 +239,9 @@ int main(int argc, char** argv)
             int hitcoarsebin = fft_bin>>15;
             fprintf(datatext, "%d, %d, %d, %e, %f, %d\n", k, beamnum, pfb_bin, (double) spectra.coarse_spectra[pfb_bin], (double) value, fft_bin);
 
+            // insert hits data into serendip hits table
+            sprintf(hitsquery, "INSERT INTO hits (eventpower, meanpower, binnum) VALUES (%f, %e, %d)", (double) value, (double) spectra.coarse_spectra[pfb_bin], fft_bin);
+
 	    //header is the size of packet in bytes
 		
 	    data_ptr++;
@@ -257,13 +261,16 @@ int main(int argc, char** argv)
         // insert header data in serendip config table
         // set digital_lo and board to be constants, because we figured we knew
         // what they were and that they weren't changing
-        sprintf(sqlquery, "INSERT INTO config (beamnum, obstime, ra, decl, digital_lo, board, AGC_SysTime, AGC_Time, AGC_Az, AGC_Za, AlfaFirstBias, AlfaSecondBias, AlfaMotorPosition, synI_freqHz, IF1_synI_ampDB, IF1_if1FrqMHz, IF1_alfaFb, TT_TurretEncoder, TT_TurretDegrees, rawfile) VALUES (%ld, %lf, %lf, %lf, %ld, %s, %lf, %lf, %lf, %lf, %ld, %ld, %lf, %lf, %ld, %lf, %ld, %ld, %lf, %s)", 
+        // NOTE: will have to be moved into the main loop in order to get
+        // specid to the hits query
+        sprintf(sqlquery, "INSERT INTO config (beamnum, obstime, ra, decl, digital_lo, board, AGC_SysTime, AGC_Time, AGC_Az, AGC_Za, AlfaFirstBias, AlfaSecondBias, AlfaMotorPosition, synI_freqHz, IF1_synI_ampDB, IF1_if1FrqMHz, IF1_alfaFb, TT_TurretEncoder, TT_TurretDegrees, rawfile) VALUES (%ld, %lf, %lf, %lf, %ld, %s, %ld, %ld, %lf, %lf, %ld, %ld, %lf, %lf, %ld, %lf, %ld, %ld, %lf, %s)", 
                 beamnum, hittime, frame.ra, frame.dec, 200000000, "B2", frame.agc_systime, frame.agc_time, 
                 frame.agc_az, frame.agc_za, frame.alfashm_alfafirstbias, frame.alfashm_alfasecondbias, 
                 frame.alfashm_alfamotorposition, frame.if1_syni_freqhz_0, frame.if1_syni_ampdb_0, 
                 frame.if1_if1frqmhz, frame.if1_alfafb, frame.tt_turretencoder, frame.tt_turretdegrees, argv[1]);
 
-        printf("%s", sqlquery);
+        // check that sqlquery is reading like we want it to
+        printf("%s\n", sqlquery);
 
         for(i=0;i<4094;i++) {
             spectra.coarse_spectra[i] = spectra.coarse_spectra[i+1];
