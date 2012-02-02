@@ -158,11 +158,12 @@ int read_header_data(char * header, struct setidata * frame)
     // cleaned up later. 
     char buf[4096];
     char c;
-    int i,j,k;
+    int i,j,k,l;
     char fields[100][4096];
     i=0;
     j=0;
     k=0;
+    l=0;
     do {
         c = header[k];
         if (c!='\0') {
@@ -178,9 +179,7 @@ int read_header_data(char * header, struct setidata * frame)
         k++;
     } while (strncmp(buf, "END_OF_HEADER", 13));
 
-    i=0;
-
-    for (i=0; i<1024; i++) {
+    for (l=0; l<1024; l++) {
         c = header[k];
         if (c!='\n') {
             buf[i++] = c;
@@ -195,6 +194,8 @@ int read_header_data(char * header, struct setidata * frame)
         k++;
     }
 
+    printf(fields[17]);
+    
     sscanf(fields[1], "HEADER_SIZE %ld", & frame->header_size);
     sscanf(fields[2], "DATA_SIZE %ld", & frame->data_size);
     sscanf(fields[3], "NAME %s", & frame->name);
