@@ -1,5 +1,9 @@
 #include "setiread.h"
 
+extern "C" {
+#include "aocoord/azzaToRaDec.h"
+}
+
 
 int main(int argc, char** argv)
 {
@@ -52,6 +56,12 @@ int main(int argc, char** argv)
     //create header structure
     struct setidata frame;
 
+    // create time structure
+    double hittime;
+
+    // create SQL structures
+    char sqlquery[1024];
+
     // file variables
     FILE *datatext;
 
@@ -99,8 +109,11 @@ int main(int argc, char** argv)
 
         next_buffer_size = read_header(header);
         read_header_data(header, &frame);
+        scramAzZatoRaDec(frame.agc_systime, frame.agc_time, frame.agc_az, frame.agc_za, 
+                frame.alfashm_alfamotorposition, beamnum, 0, &frame.ra, &frame.dec,  &hittime);
+        printf("RA: %f, Dec: %f\n", frame.ra, frame.dec);
         //in case we are at EOF
-
+        
         /* make sure that we have at least next_buffer_size before we read */
 /*
     	do {
@@ -240,6 +253,17 @@ int main(int argc, char** argv)
 //	grace_init_deux(maxbin,log10(maxvalue),xmax);	
 
 	counter++;
+        
+        // insert header data in serendip config table
+        // set digital_lo and board to be constants, because we figured we knew
+        // what they were and that they weren't changing
+        sprintf(sqlquery, "INSERT INTO config (beamnum, obstime, ra, decl, digital_lo, board, AGC_SysTime, AGC_Time, AGC_Az, AGC_Za, AlfaFirstBias, AlfaSecondBias, AlfaMotorPosition, synI_freqHz, IF1_synI_ampDB, IF1_if1FrqMHz, IF1_alfaFb, TT_TurretEncoder, TT_TurretDegrees, rawfile) VALUES (%ld, %lf, %lf, %lf, %ld, %s, %lf, %lf, %lf, %lf, %ld, %ld, %lf, %lf, %ld, %lf, %ld, %ld, %lf, %s)", 
+                beamnum, hittime, frame.ra, frame.dec, 200000000, "B2", frame.agc_systime, frame.agc_time, 
+                frame.agc_az, frame.agc_za, frame.alfashm_alfafirstbias, frame.alfashm_alfasecondbias, 
+                frame.alfashm_alfamotorposition, frame.if1_syni_freqhz_0, frame.if1_syni_ampdb_0, 
+                frame.if1_if1frqmhz, frame.if1_alfafb, frame.tt_turretencoder, frame.tt_turretdegrees, argv[1]);
+
+        printf("%s", sqlquery);
 
         for(i=0;i<4094;i++) {
             spectra.coarse_spectra[i] = spectra.coarse_spectra[i+1];

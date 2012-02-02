@@ -1,5 +1,5 @@
-INCS = -I/usr/local/grace/include
-LIBS = -lstdc++ -lgrace_np -L/usr/local/grace/lib
+INCS = -I/usr/local/grace/include  
+LIBS = -lstdc++ -lgrace_np -L/usr/local/grace/lib -Laocoord -lazzatoradec 
 
 
 default: test_diskbuf.C

@@ -95,6 +95,10 @@ struct setidata {
     char synth_model[255];
     double turret_degrees_alfa;
     long turret_degrees_tolerance;
+    long pfb_shift;
+    long fft_shift;
+    long thrlimit;
+    long thrscale;
 };
 
 
