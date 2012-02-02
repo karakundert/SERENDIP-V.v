@@ -110,10 +110,7 @@ int main(int argc, char** argv)
 
         next_buffer_size = read_header(header);
         read_header_data(header, &frame);
-        scramAzZatoRaDec(frame.agc_systime, frame.agc_time, frame.agc_az, frame.agc_za, 
-                frame.alfashm_alfamotorposition, beamnum, 0, &frame.ra, &frame.dec,  &hittime);
-        printf("RA: %f, Dec: %f\n", frame.ra, frame.dec);
-        //in case we are at EOF
+	//in case we are at EOF
         
         /* make sure that we have at least next_buffer_size before we read */
 /*
@@ -130,6 +127,10 @@ int main(int argc, char** argv)
 
 
         datasize = read(fd, (void *) data, next_buffer_size);
+        read_data_header(data, &frame);
+        scramAzZatoRaDec(frame.agc_systime, frame.agc_time, frame.agc_az, frame.agc_za, 
+                frame.alfashm_alfamotorposition, beamnum, 0, &frame.ra, &frame.dec,  &hittime);
+        printf("RA: %f, Dec: %f\n", frame.ra, frame.dec);
 		
         //doesn't do any bounds checking yet...
         spectra.numhits = read_data(data, datasize) - 4096;

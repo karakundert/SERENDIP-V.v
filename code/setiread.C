@@ -14,6 +14,7 @@
 #include <netinet/in.h>
 #include <netdb.h>
 #include <arpa/inet.h>
+#include <assert.h>
 
 long read_data(char * data, int datasize)
 {
@@ -179,60 +180,38 @@ int read_header_data(char * header, struct setidata * frame)
         k++;
     } while (strncmp(buf, "END_OF_HEADER", 13));
 
-    i=0;
-
-    for (l=0; l<1024; l++) {
-        c = header[k];
-        if (c!='\0'){
-            if (c!='\n') {
-                buf[i++] = c;
-            }
-        }
-        else {
-            if (i!=0) {
-                buf[i] = c;
-                printf("%s\n", buf);
-                strcpy(fields[j++], buf);
-                i=0;
-            }
-        }
-        k++;
-    }
-
-    sscanf(fields[1], "HEADER_SIZE %ld", & frame->header_size);
-    sscanf(fields[2], "DATA_SIZE %ld", & frame->data_size);
-    sscanf(fields[3], "NAME %s", & frame->name);
-    sscanf(fields[4], "DSI %ld", & frame->dsi);
-    sscanf(fields[5], "FRAMESEQ %ld", & frame->frameseq);
-    sscanf(fields[6], "DATASEQ %ld", & frame->dataseq);
-    sscanf(fields[7], "IDLECOUNT %ld", & frame->idlecount);
-    sscanf(fields[8], "MISSED %ld", & frame->missed);
-    sscanf(fields[9], "AST %ld", & frame->ast);
-    sscanf(fields[12], "RECEIVER %s", & frame->receiver);
-    sscanf(fields[13], "SAMPLERATE %lf", & frame->samplerate);
-    sscanf(fields[14], "VER %lf", & frame->ver);
-    sscanf(fields[15], "SCRAM AGC AGC_SysTime %ld AGC_Az %lf AGC_Za %lf AGC_Time %ld", & frame->agc_systime, & frame->agc_az, & frame->agc_za, & frame->agc_time);
-    sscanf(fields[16], "SCRAM ALFASHM ALFASHM_SysTime %ld ALFASHM_AlfaFirstBias %ld ALFASHM_AlfaSecondBias %ld ALFASHM_AlfaMotorPosition %lf", & frame->alfashm_systime, & frame->alfashm_alfafirstbias, & frame->alfashm_alfasecondbias, & frame->alfashm_alfamotorposition);
-    sscanf(fields[17], "SCRAM IF1 IF1_SysTime %ld IF1_synI_freqHz_0 %lf IF1_synI_ampDB_0 %ld IF1_rfFreq %lf IF1_if1FrqMhz %lf IF1_alfaFb %ld", & frame->if1_systime, & frame->if1_syni_freqhz_0, & frame->if1_syni_ampdb_0, & frame->if1_rffreq, & frame->if1_if1frqmhz, & frame->if1_alfafb);
-    sscanf(fields[18], "SCRAM IF2 IF2_SysTime %ld IF2_useAlfa %ld", & frame->if2_systime, & frame->if2_usealfa);
-    sscanf(fields[19], "SCRAM TT TT_SysTime %ld TT_TurretEncoder %ld TT_TurretDegrees %lf", & frame->tt_systime, & frame->tt_turretencoder, & frame->tt_turretdegrees);
-    sscanf(fields[40], "min_synth_freq %ld", & frame->min_synth_freq);
-    sscanf(fields[41], "max_synth_freq %ld", & frame->max_synth_freq);
-    sscanf(fields[42], "min_rec_freq %ld", & frame->min_rec_freq);
-    sscanf(fields[43], "max_rec_freq %ld", & frame->max_rec_freq);
-    sscanf(fields[44], "filtered_min_rec_freq %ld", & frame->filtered_min_rec_freq);
-    sscanf(fields[45], "filtered_max_rec_freq %ld", & frame->filtered_max_rec_freq);
-    sscanf(fields[48], "num_m_in_d %ld", & frame->num_m_in_d);
-    sscanf(fields[50], "num_diskbufs %ld", & frame->num_diskbufs);
-    sscanf(fields[51], "synth_model %s", & frame->synth_model);
-    sscanf(fields[54], "turret_degrees_alfa %lf", & frame->turret_degrees_alfa);
-    sscanf(fields[55], "turret_degrees_tolerance %ld", & frame->turret_degrees_tolerance);
-    sscanf(fields[57], "PFB SHIFT: %ld", & frame->pfb_shift);
-    sscanf(fields[58], "FFT SHIFT: %ld", & frame->fft_shift);
-    sscanf(fields[59], "THRESH LIMIT: %ld", & frame->thrlimit);
-    sscanf(fields[60], "THRESH SCALE: %ld", & frame->thrscale);
-    
-    
+    assert(sscanf(fields[1], "HEADER_SIZE %ld", & frame->header_size));
+    assert(sscanf(fields[2], "DATA_SIZE %ld", & frame->data_size));
+    assert(sscanf(fields[3], "NAME %s", & frame->name));
+    assert(sscanf(fields[4], "DSI %ld", & frame->dsi));
+    assert(sscanf(fields[5], "FRAMESEQ %ld", & frame->frameseq));
+    assert(sscanf(fields[6], "DATASEQ %ld", & frame->dataseq));
+    assert(sscanf(fields[7], "IDLECOUNT %ld", & frame->idlecount));
+    assert(sscanf(fields[8], "MISSED %ld", & frame->missed));
+    assert(sscanf(fields[9], "AST %ld", & frame->ast));
+    assert(sscanf(fields[12], "RECEIVER %s", & frame->receiver));
+    assert(sscanf(fields[13], "SAMPLERATE %lf", & frame->samplerate));
+    assert(sscanf(fields[14], "VER %lf", & frame->ver));
+    assert(sscanf(fields[15], "SCRAM AGC AGC_SysTime %ld AGC_Az %lf AGC_Za %lf AGC_Time %ld", & frame->agc_systime, & frame->agc_az, & frame->agc_za, & frame->agc_time));
+    assert(sscanf(fields[16], "SCRAM ALFASHM ALFASHM_SysTime %ld ALFASHM_AlfaFirstBias %ld ALFASHM_AlfaSecondBias %ld ALFASHM_AlfaMotorPosition %lf", & frame->alfashm_systime, & frame->alfashm_alfafirstbias, & frame->alfashm_alfasecondbias, & frame->alfashm_alfamotorposition));
+    assert(sscanf(fields[17], "SCRAM IF1 IF1_SysTime %ld IF1_synI_freqHz_0 %lf IF1_synI_ampDB_0 %ld IF1_rfFreq %lf IF1_if1FrqMhz %lf IF1_alfaFb %ld", & frame->if1_systime, & frame->if1_syni_freqhz_0, & frame->if1_syni_ampdb_0, & frame->if1_rffreq, & frame->if1_if1frqmhz, & frame->if1_alfafb));
+    assert(sscanf(fields[18], "SCRAM IF2 IF2_SysTime %ld IF2_useAlfa %ld", & frame->if2_systime, & frame->if2_usealfa));
+    assert(sscanf(fields[19], "SCRAM TT TT_SysTime %ld TT_TurretEncoder %ld TT_TurretDegrees %lf", & frame->tt_systime, & frame->tt_turretencoder, & frame->tt_turretdegrees));
+    assert(sscanf(fields[40], "min_synth_freq %ld", & frame->min_synth_freq));
+    assert(sscanf(fields[41], "max_synth_freq %ld", & frame->max_synth_freq));
+    assert(sscanf(fields[42], "min_rec_freq %ld", & frame->min_rec_freq));
+    assert(sscanf(fields[43], "max_rec_freq %ld", & frame->max_rec_freq));
+    assert(sscanf(fields[44], "filtered_min_rec_freq %ld", & frame->filtered_min_rec_freq));
+    assert(sscanf(fields[45], "filtered_max_rec_freq %ld", & frame->filtered_max_rec_freq));
+    assert(sscanf(fields[48], "num_m_in_d %ld", & frame->num_m_in_d));
+    assert(sscanf(fields[50], "num_diskbufs %ld", & frame->num_diskbufs));
+    assert(sscanf(fields[52], "synth_model %s", & frame->synth_model));
+    assert(sscanf(fields[55], "turret_degrees_alfa %lf", & frame->turret_degrees_alfa));
+    assert(sscanf(fields[56], "turret_degrees_tolerance %ld", & frame->turret_degrees_tolerance));
+    // assert(sscanf(fields[57], "PFB SHIFT: %ld", & frame->pfb_shift));
+    // assert(sscanf(fields[58], "FFT SHIFT: %ld", & frame->fft_shift));
+    // assert(sscanf(fields[59], "THRESH LIMIT: %ld", & frame->thrlimit));
+    // assert(sscanf(fields[60], "THRESH SCALE: %ld", & frame->thrscale));
 
     // TEMP: check that data retrieval is working by comparing equivalent variables
     printf("frame.agc_systime %ld\n", frame->agc_systime);
@@ -241,12 +220,48 @@ int read_header_data(char * header, struct setidata * frame)
     printf("frame.receiver %s\n", frame->receiver);
     printf("frame.min_synth_freq %ld\n", frame->min_synth_freq);
     printf("frame.samplerate %lf\n", frame->samplerate);
-    printf("frame.pfb_shift %ld\n", frame->pfb_shift);
-    printf("frame.fft_shift %lf\n", frame->fft_shift);
-    printf("frame.thrlimit %lf\n", frame->thrlimit);
 
     return frame->header_size;
+}
 
+
+int read_data_header(char *data, struct setidata *frame)
+{
+    // read the parameters that are given at the start of the data
+    char buf[2048];
+    char c;
+    int i,j,k,l;
+    char fields[100][2048];
+    //printf("### data header = {%s}\n", data);
+    i=0;
+    j=0;
+    k=0;
+    l=0;
+    for (l=0; l<2048; l++) {
+        c = data[k++];
+        if (c != '\0') {
+	    buf[i++] = c;
+	    if (c == '\n') {
+		buf[i] = '\0';
+		strcpy(fields[j++], buf);
+		i=0;
+	    }
+	}
+    }
+
+    assert(strncmp(fields[0], "BEE2_STATUS:", strlen("BEE2_STATUS:")));
+    assert(sscanf(fields[1], "PFB SHIFT: %ld", & frame->pfb_shift));
+    assert(sscanf(fields[2], "FFT SHIFT: %ld", & frame->fft_shift));
+    assert(sscanf(fields[3], "THRESH LIMIT: %ld", & frame->thrlimit));
+    assert(sscanf(fields[4], "THRESH SCALE: %ld", & frame->thrscale));
+
+    // TEMP: check that data retrieval is working by comparing equivalent variables
+    printf("frame.pfb_shift %ld\n", frame->pfb_shift);
+    printf("frame.fft_shift %ld\n", frame->fft_shift);
+    printf("frame.thrlimit %ld\n", frame->thrlimit);
+    printf("frame.thrscale %d\n", frame->thrscale);
+
+    return frame->header_size;
 }
 
 
