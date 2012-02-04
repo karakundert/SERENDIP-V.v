@@ -116,6 +116,7 @@ int read_header(char * header);
 long read_data(char * data, int datasize);
 int read_beam(char * data, int datasize);
 int read_header_data(char * header, struct setidata * frame);
+int read_data_header(char * data, struct setidata * frame);
 
 void grace_open_deux(int bufsize);
 void grace_init_deux(int maxbin,float maxvalue,int xmax);

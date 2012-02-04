@@ -2,6 +2,7 @@
 
 extern "C" {
 #include "aocoord/azzaToRaDec.h"
+#include "setimysql.h"
 }
 
 
@@ -60,11 +61,17 @@ int main(int argc, char** argv)
     double hittime;
 
     // create SQL structures
+    unsigned long int specid;
+    //strcpy(def_password, argv[2]);
     char sqlquery[1024];
-    char hitsquery[1024];
+    char hitquery[1024];
 
     // file variables
     FILE *datatext;
+
+
+    // connect to mySQL database
+    dbconnect();
 
     // Initialize grace plotting windows
     grace_init();
@@ -127,15 +134,36 @@ int main(int argc, char** argv)
 
 
         datasize = read(fd, (void *) data, next_buffer_size);
+        beamnum = read_beam(data, datasize);
         read_data_header(data, &frame);
         scramAzZatoRaDec(frame.agc_systime, frame.agc_time, frame.agc_az, frame.agc_za, 
                 frame.alfashm_alfamotorposition, beamnum, 0, &frame.ra, &frame.dec,  &hittime);
         printf("RA: %f, Dec: %f\n", frame.ra, frame.dec);
 		
+        // creates query to config table
+        // set digital_lo and board to be constants, because we figured we knew
+        // what they were and that they weren't changing
+        char bid[] = "B2";
+        sprintf(sqlquery, "INSERT INTO config (thrscale, thrlimit, fftshift, pfbshift, beamnum, obstime, ra, decl, digital_lo, board, AGC_SysTime, AGC_Time, AGC_Az, AGC_Za, AlfaFirstBias, AlfaSecondBias, AlfaMotorPosition, synI_freqHz, IF1_synI_ampDB, IF1_if1FrqMHz, IF1_alfaFb, TT_TurretEncoder, TT_TurretDegrees, rawfile) VALUES (%ld, %ld, %ld, %ld, %d, %lf, %lf, %lf, %ld, '%s', %ld, %ld, %lf, %lf, %ld, %ld, %lf, %lf, %ld, %lf, %ld, %ld, %lf, '%s')", 
+                frame.thrscale, frame.thrlimit, frame.fft_shift, frame.pfb_shift,
+                beamnum, hittime, frame.ra, frame.dec, 200000000, bid, frame.agc_systime, frame.agc_time, 
+                frame.agc_az, frame.agc_za, frame.alfashm_alfafirstbias, frame.alfashm_alfasecondbias, 
+                frame.alfashm_alfamotorposition, frame.if1_syni_freqhz_0, frame.if1_syni_ampdb_0, 
+                frame.if1_if1frqmhz, frame.if1_alfafb, frame.tt_turretencoder, frame.tt_turretdegrees, argv[1]);
+
+        // insert header data into serendipvv config table
+        if (mysql_query(conn, sqlquery)) {
+            fprintf(stderr, "Error inserting data into sql database... \n");
+            exiterr(3);
+        }
+
+        // saves specid to be inserted at index in other sql tables
+        if ((res = mysql_store_result(conn))==0 && mysql_field_count(conn)==0 && mysql_insert_id(conn)!=0) {
+            specid = (unsigned long int) mysql_insert_id(conn);
+        }
+
         //doesn't do any bounds checking yet...
         spectra.numhits = read_data(data, datasize) - 4096;
-        beamnum = read_beam(data, datasize);
-
 
 	//printf("size of spectra %d\n",spectra.numhits);
 	//header,data
@@ -241,7 +269,13 @@ int main(int argc, char** argv)
             fprintf(datatext, "%d, %d, %d, %e, %f, %d\n", k, beamnum, pfb_bin, (double) spectra.coarse_spectra[pfb_bin], (double) value, fft_bin);
 
             // insert hits data into serendip hits table
-            sprintf(hitsquery, "INSERT INTO hits (eventpower, meanpower, binnum) VALUES (%f, %e, %d)", (double) value, (double) spectra.coarse_spectra[pfb_bin], fft_bin);
+            sprintf(hitquery, "INSERT INTO hit (eventpower, meanpower, binnum, specid) VALUES (%f, %e, %d, %ld)", (double) value, (double) spectra.coarse_spectra[pfb_bin], fft_bin, specid);
+
+            // insert header data into serendipvv config table
+            if (mysql_query(conn, hitquery)) {
+                fprintf(stderr, "Error inserting data into sql database... \n");
+                exiterr(3);
+            }
 
 	    //header is the size of packet in bytes
 		
@@ -259,20 +293,6 @@ int main(int argc, char** argv)
 
 	counter++;
         
-        // insert header data in serendip config table
-        // set digital_lo and board to be constants, because we figured we knew
-        // what they were and that they weren't changing
-        // NOTE: will have to be moved into the main loop in order to get
-        // specid to the hits query
-        sprintf(sqlquery, "INSERT INTO config (beamnum, obstime, ra, decl, digital_lo, board, AGC_SysTime, AGC_Time, AGC_Az, AGC_Za, AlfaFirstBias, AlfaSecondBias, AlfaMotorPosition, synI_freqHz, IF1_synI_ampDB, IF1_if1FrqMHz, IF1_alfaFb, TT_TurretEncoder, TT_TurretDegrees, rawfile) VALUES (%ld, %lf, %lf, %lf, %ld, %s, %ld, %ld, %lf, %lf, %ld, %ld, %lf, %lf, %ld, %lf, %ld, %ld, %lf, %s)", 
-                beamnum, hittime, frame.ra, frame.dec, 200000000, "B2", frame.agc_systime, frame.agc_time, 
-                frame.agc_az, frame.agc_za, frame.alfashm_alfafirstbias, frame.alfashm_alfasecondbias, 
-                frame.alfashm_alfamotorposition, frame.if1_syni_freqhz_0, frame.if1_syni_ampdb_0, 
-                frame.if1_if1frqmhz, frame.if1_alfafb, frame.tt_turretencoder, frame.tt_turretdegrees, argv[1]);
-
-        // check that sqlquery is reading like we want it to
-        printf("%s\n", sqlquery);
-
         for(i=0;i<4094;i++) {
             spectra.coarse_spectra[i] = spectra.coarse_spectra[i+1];
         }
