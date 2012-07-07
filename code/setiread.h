@@ -26,6 +26,10 @@
 #define HEADER_SIZE 8
 #define ERROR_BUF_SIZE 1024
 #define SETI_HEADER_SIZE_IN_BYTES 512+8+8
+#define ALFA_FREQ_LO 1225000000 
+#define ALFA_FREQ_HI 1525000000
+#define NBF_FREQ_LO 1390000000
+#define NBF_FREQ_HI 1490000000
 
 #ifndef EXIT_SUCCESS
 #  define EXIT_SUCCESS 0
@@ -34,6 +38,10 @@
 #ifndef EXIT_FAILURE
 #  define EXIT_FAILURE -1
 #endif
+
+#define         AO_LONG 66.7531
+#define         AO_LAT 18.3435
+#define         AO_ELEV 497.0
 
 /* structure for spectral data */
 struct spectral_data{
@@ -117,6 +125,8 @@ long read_data(char * data, int datasize);
 int read_beam(char * data, int datasize);
 int read_header_data(char * header, struct setidata * frame);
 int read_data_header(char * data, struct setidata * frame);
+double time2mjd(time_t tobs, long tuobs);
+void get_filename(char * instr, char * rawfile);
 
 void grace_open_deux(int bufsize);
 void grace_init_deux(int maxbin,float maxvalue,int xmax);

@@ -16,6 +16,10 @@
 #include <arpa/inet.h>
 #include <assert.h>
 
+extern "C" {
+#include "aocoord/azzaToRaDec.h"
+}
+
 long read_data(char * data, int datasize)
 {
     long record_count = ((long *) data)[0];
@@ -214,13 +218,13 @@ int read_header_data(char * header, struct setidata * frame)
     // assert(sscanf(fields[60], "THRESH SCALE: %ld", & frame->thrscale));
 
     // TEMP: check that data retrieval is working by comparing equivalent variables
-    printf("frame.agc_systime %ld\n", frame->agc_systime);
+/*    printf("frame.agc_systime %ld\n", frame->agc_systime);
     printf("frame.agc_az %lf\n", frame->agc_az);
     printf("frame.agc_za %lf\n", frame->agc_za);
     printf("frame.receiver %s\n", frame->receiver);
     printf("frame.min_synth_freq %ld\n", frame->min_synth_freq);
     printf("frame.samplerate %lf\n", frame->samplerate);
-
+*/
     return frame->header_size;
 }
 
@@ -232,6 +236,7 @@ int read_data_header(char *data, struct setidata *frame)
     char c;
     int i,j,k,l;
     char fields[100][2048];
+    int offset=0;
     //printf("### data header = {%s}\n", data);
     i=0;
     j=0;
@@ -248,22 +253,62 @@ int read_data_header(char *data, struct setidata *frame)
 	    }
 	}
     }
-
-    assert(strncmp(fields[0], "BEE2_STATUS:", strlen("BEE2_STATUS:")));
-    assert(sscanf(fields[1], "PFB SHIFT: %ld", & frame->pfb_shift));
-    assert(sscanf(fields[2], "FFT SHIFT: %ld", & frame->fft_shift));
-    assert(sscanf(fields[3], "THRESH LIMIT: %ld", & frame->thrlimit));
-    assert(sscanf(fields[4], "THRESH SCALE: %ld", & frame->thrscale));
+/*
+    int iii=0;
+    for(iii=0; iii<5; iii++)
+	fprintf(stderr, "%s", fields[iii]);
+*/
+    //If the first field is a newline character, skip it
+//    if(strcmp(fields[0], "\n") != 0)
+    if(strstr(fields[0], "BEE2"))
+	offset=0;
+    else
+	offset=1;
+    assert(strncmp(fields[0+offset], "BEE2_STATUS:", strlen("BEE2_STATUS:")));
+    assert(sscanf(fields[1+offset], "PFB SHIFT: %ld", & frame->pfb_shift));
+    assert(sscanf(fields[2+offset], "FFT SHIFT: %ld", & frame->fft_shift));
+    assert(sscanf(fields[3+offset], "THRESH LIMIT: %ld", & frame->thrlimit));
+    assert(sscanf(fields[4+offset], "THRESH SCALE: %ld", & frame->thrscale));
 
     // TEMP: check that data retrieval is working by comparing equivalent variables
-    printf("frame.pfb_shift %ld\n", frame->pfb_shift);
+/*    printf("frame.pfb_shift %ld\n", frame->pfb_shift);
     printf("frame.fft_shift %ld\n", frame->fft_shift);
     printf("frame.thrlimit %ld\n", frame->thrlimit);
     printf("frame.thrscale %d\n", frame->thrscale);
-
+*/
     return frame->header_size;
 }
 
+double time2mjd(time_t tobs, long tuobs)
+{
+	/*tobs = "AGC_SysTime" Unix time (i.e. sec from 1.1.1970)
+          tuobs = "AGC_Time" msec from local midnight */
+
+	int year,month,day;
+        double tmjd,day_frac;
+	struct tm *ao_tm;
+
+	ao_tm=gmtime(&tobs);
+	year=ao_tm->tm_year+1900;
+	month=ao_tm->tm_mon+1;
+	day=ao_tm->tm_mday;
+	day_frac=((double) ao_tm->tm_hour)/24.0 + ((double) ao_tm->tm_min)/(24*60.0) + ((double) ao_tm->tm_sec)/(24*3600.0);
+        tmjd=(double) gregToMjd(day,month,year);
+
+        tmjd+=day_frac;
+
+        return tmjd;
+}
+
+/*Extracts the name of the file from a full path string*/
+void get_filename(char * instr, char * rawfile)
+{
+	char *loc;
+
+	loc=strstr(instr, "largefile");
+
+	rawfile=strncpy(rawfile, loc, 24);
+}
 
 /* Initialize GRACE plotting window */
 int grace_init()
@@ -719,12 +764,4 @@ void grace_init_deux(int maxbin,float maxvalue,int xmax)
 
 }
 
-
-
-
-
-
-
-
- 
 
