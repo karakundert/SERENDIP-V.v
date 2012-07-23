@@ -28,3 +28,5 @@ same set of axes.
 
 ra_dec: Plots observing locations on either cartesian coordinates or a sky
 map as a function of ra and dec.
+
+driftrate: Can calculate and plot drift rates for a range of specids. 
