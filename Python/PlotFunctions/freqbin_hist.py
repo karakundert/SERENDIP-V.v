@@ -1,3 +1,45 @@
+import sys
+
+def main(freq_type='topo',increment_log=7,where='h.specid<100',dolog='False',saveplot=''):
+  """Creates a histogram of hits versus frequency, 
+  where frequency (or binnum) has been grouped by 
+  increments of 10^(increment_log).
+
+  freq_type is either 'topo', 'bary', or 'binnum'. default is
+  topo
+
+  increment_log is the log of the spacing between bins. must 
+  be an integer
+
+  where is a string to include additional information to 
+  narrow the results. typically it will be used to specify a 
+  range of specids. each column name MUST be prefixed with 
+  the first letter of the table name and a period, like 
+  c.obstime. include c.specid=h.specid if referncing both hit and 
+  config tables. do not include the word 'where' at the beginning 
+  or the semicolon at the end. all other common mysql syntax 
+  rules apply. Ex: 'h.specid>1 and h.specid<=20 
+  and c.beamnum!=8 and h.specid=c.specid'. by default it will
+  grab only the first 99 specids.
+
+  if dolog='True', the hit count is plotted on a log scale
+
+  saveplot allows the user to have the plot saved by inputting
+  the file name. if left empty, no file will be saved.
+
+  output is a figure instance."""
+
+  #Get data
+  bins,count = fetchdata(freq_type,increment_log,where)
+  
+  #Plot data
+  fig = makeplot(bins,count,freq_type,increment_log,where,dolog,saveplot)
+  
+  return fig
+
+if __name__=="__main__":
+  main()
+  
 def fetchdata(freq_type='topo',increment_log=7,where='h.specid<100',savedata=''):
   """Fetches data for creating a histogram of hits versus
   frequency, where frequency (or binnum) has been grouped by 
@@ -45,7 +87,7 @@ def fetchdata(freq_type='topo',increment_log=7,where='h.specid<100',savedata='')
   
   return (bins, count)
 
-def makeplot(freq_type='topo',increment_log=7,where='h.specid<100',dolog='False',saveplot=''):
+def makeplot(bins,count,freq_type='topo',increment_log=7,where='h.specid<100',dolog='False',saveplot=''):
   """Creates a histogram of hits at different
   frequencies, separated into bins by increments of 
   10^(increment_log).
@@ -75,10 +117,7 @@ def makeplot(freq_type='topo',increment_log=7,where='h.specid<100',dolog='False'
   
   import pylab, numpy, math, MySQLFunction, command, jd2gd
 
-  #Use fetchdata to get the necessary arrays of values
-  bins,count = fetchdata(freq_type,increment_log,where)
-
-  #Is there data to plot?
+  #Are there data to plot?
   if len(bins)!=0:
 
     #Initialize figure
@@ -281,4 +320,4 @@ def loop(interval=1,start=55678,end=55688,beams='False'):
       name = '/home/jburt/Desktop/Frequency_Bins/freqbin_hist_from_%s_to_%s.png'%(obstime_l,obstime_h)
       
       #Execute script
-      makeplot(freq_type,increment_log,where,dolog,name)
+      main(freq_type,increment_log,where,dolog,name)

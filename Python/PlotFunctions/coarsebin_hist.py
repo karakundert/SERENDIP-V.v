@@ -1,3 +1,48 @@
+import sys
+
+def main(maximum=24,histtype='fracmax',where='',saveplot=''):
+  """Fetches data for event count per coarse frequency bin
+  and plots it.
+
+  maximum is the maximum number of allowed hits per coarse bin
+
+  histtype specifies the type of histogram you intend to 
+  plot: 
+  
+  'fracmax' is the fraction of spectra that reach the 
+  maximum for each coarse bin, and the default option, 
+  
+  '%full' is the percent full each coarse bin is after adding   
+  events for all desired spectra, and
+ 
+  'maxcount' is the number of times each bin reaches the maximum
+
+  where is a string to include additional information to 
+  narrow the results. typically it will be used to specify a 
+  range of specids. each column name MUST be prefixed with 
+  the first letter of the table name and a period, like 
+  c.obstime. don't forget to include 'h.specid=c.specid if 
+  referencing table config. do not include the word 'where' 
+  at the beginning or the semicolon at the end. all other common 
+  mysql syntax rules apply. Ex: 'h.specid>1 and h.specid<=20 and 
+  c.beamnum!=8 and c.specid=h.specid'. 
+
+  saveplot allows the user to have the figure saved by 
+  inputting the file name. if left empty, no file will be saved
+
+  returns a figure instance. """
+
+  #Get data
+  bins,count = fetchdata(maximum,histtype,where)
+  
+  #Plot data
+  fig = makeplot(bins,count,maximum,histtype,where,saveplot)
+  
+  return fig
+
+if __name__=="__main__":
+  main()
+
 def fetchdata(maximum=24,histtype='fracmax',where='',savedata=''):
   """Fetches data for event count per coarse frequency bin.
 
@@ -97,7 +142,7 @@ def fetchdata(maximum=24,histtype='fracmax',where='',savedata=''):
     numpy.savetxt('%s' %savedata,(bins,count))
   return (bins,count)
 
-def makeplot(maximum=24,histtype='fracmax',where='',saveplot=''):
+def makeplot(bins,count,maximum=24,histtype='fracmax',where='',saveplot=''):
   """Plots data for event count per coarse frequency bin.
 
   maximum is the maximum number of allowed hits per coarse bin
@@ -130,9 +175,6 @@ def makeplot(maximum=24,histtype='fracmax',where='',saveplot=''):
 
   import pylab, MySQLFunction, jd2gd, numpy, command
 
-  #Use fetchdata to get the necessary arrays of values
-  bins,count=fetchdata(maximum=maximum,histtype=histtype,where=where)
-
   #Data to plot?
   if len(bins) != 0:
 
@@ -140,22 +182,22 @@ def makeplot(maximum=24,histtype='fracmax',where='',saveplot=''):
    fig=pylab.figure(figsize=(12,7))
    ax1 = fig.add_axes([0.1, 0.14, 0.85, 0.75])
 
+   #Set axes limits
+   v = [0,4096,0,max(count)]
+   ax1.axis(v)
+
    #Configure xticks
    xticks = numpy.arange(0,4097,256)
-   pylab.xticks(xticks)
+   ax1.set_xticks(xticks)
 
    #Rotate xticks
    for i in ax1.get_xticklabels(): i.set_rotation(45)
 
    #Add grid
    pylab.grid(True)
-
-   #Set axes limits
-   v = [0,4096,0,max(count)]
-   pylab.axis(v)
   
    #Plot data
-   pylab.bar(bins,count,width=1)
+   pylab.bar(bins,count,width=1,align='center')
 
    #Get extra info for plot
    if 'c.' not in where:
@@ -280,5 +322,5 @@ def loop(interval=1,start=55678,end=55688):
       name = 'coarsebin_hist_from_%s_to_%s_beam%i.png'%(obstime_l,obstime_h,x)
       
       #Execute script
-      makeplot(maximum,histtype,where,name)
+      main(maximum,histtype,where,name)
     

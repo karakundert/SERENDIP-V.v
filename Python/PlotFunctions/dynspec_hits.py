@@ -1,3 +1,43 @@
+import sys
+
+def main(where='',freqtype='topo',vlim=(-1,-1),frac=0.9,saveplot=''):
+  """ Produces the dynamic spectrum plot for hits.
+
+  where is a string to include additional information to 
+  narrow the results. typically it will be used to specify a 
+  range of specids. each column name MUST be prefixed with 
+  the first letter of the table name and a period, like 
+  c.obstime. don't forget to include 'h.specid=c.specid if 
+  referencing config and hit. do not include the word 'where' 
+  at the beginning or the semicolon at the end. all other common 
+  mysql syntax rules apply. Ex: 'h.specid>1 and h.specid<=20 and 
+  c.beamnum!=8 and c.specid=h.specid'.
+
+  freqtype is the frequency type for the y-axis, either 
+  'binnum', 'topo', or 'bary'.
+
+  vlim is a tuple of (vmin,vmax). Values are used in conjuction
+  with norm to normalize luminance data.
+
+  frac is the fraction of hits, sorted by eventpower, before which
+  the size is 0.1 and after which the size is 1
+
+  saveplot allows the user to have the figure saved by 
+  inputting the file name. if left empty, no file will be saved
+
+  returns a figure instance. """
+
+  #Get data
+  eventpower,freq,time = fetchdata(where,freqtype)
+  
+  #Plot data
+  fig = makeplot(eventpower,freq,time,where,freqtype,vlim,frac,saveplot)
+  
+  return fig
+
+if __name__=="__main__":
+  main()
+  
 def fetchdata(where='',freqtype='topo',savedata=''):
   """Fetches data to produce the dynamic spectrum plot for hits.
 
@@ -56,7 +96,7 @@ def fetchdata(where='',freqtype='topo',savedata=''):
 
   return (eventpower,freq,time)
 
-def makeplot(where='',freqtype='topo',vlim=(-1,-1),frac=0.9,saveplot=''):
+def makeplot(eventpower,freq,time,where='',freqtype='topo',vlim=(-1,-1),frac=0.9,saveplot=''):
   """Produces a 'confetti plot' of spectra dynamically. 
 
   freqtype is the frequency type, either 'binnum', 'bary', or 
@@ -86,9 +126,6 @@ def makeplot(where='',freqtype='topo',vlim=(-1,-1),frac=0.9,saveplot=''):
   Figure instance
   """
   import pylab, numpy, MySQLFunction, command, jd2gd, math
-
-  # use fetchdata to get data for plot
-  eventpower,freq,time=fetchdata(where=where,freqtype=freqtype)
 
   # initialize figure
   fig=pylab.figure(figsize=(12,7))

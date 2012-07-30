@@ -1,3 +1,45 @@
+import sys
+
+def main(where='',freqtype='binnum',vlim=(-1,-1), tslim=(-1,-1),saveplot=''):
+  """Produces the three panel
+  dynamic spectrum plot. The main panel
+  is a pcolormesh figure of data with
+  the mesh defined by xarr and yarr.
+  The bottom panel shows a time series of
+  the 2D data, and the right panel shows
+  the average bandpass
+
+  freqtype is the frequency type for the pcolormesh, either 
+  'binnum' or 'topo'.
+
+  where is a string to include additional information to 
+  narrow the results. typically it will be used to specify a 
+  range of specids. each column name MUST be prefixed with 
+  the first letter of the table name and a period, like 
+  c.obstime. don't forget to include 's.specid=c.specid if 
+  referencing config and spec. do not include the word 'where' 
+  at the beginning or the semicolon at the end. all other common 
+  mysql syntax rules apply. Ex: 's.specid>1 and s.specid<=20 and 
+  c.beamnum!=8 and c.specid=s.specid'. don't include hit table.
+
+  vlim and tslim are plot limits for pcolormesh and time series.
+
+  saveplot allows the user to have the figure saved by 
+  inputting the file name. if left empty, no file will be saved
+
+  returns a figure instance. """
+
+  #Get data
+  xarr,yarr,data = fetchdata(where,freqtype)
+  
+  #Plot data
+  fig = makeplot(xarr,yarr,data,where,vlim,tslim,saveplot=saveplot)
+  
+  return fig
+
+if __name__=="__main__":
+  main()
+
 def fetchdata(where='',freqtype='binnum'):
   """Fetches data to produce the three panel dynamic spectrum 
   plot.
@@ -24,8 +66,8 @@ def fetchdata(where='',freqtype='binnum'):
   #Create command to send to database
   if ('c.specid=s.specid' or 's.specid=c.specid') not in where:
    where = where + ' and c.specid=s.specid'
-  cmd = command.generate('s.coarsespec,c.obstime,c.AGC_Time,c.IF1_rfFreq','config c, spec s', where=where)
-  print cmd
+  cmd = command.generate('s.coarsespec,c.obstime,c.AGC_Time,c.IF1_rfFreq','spec s, config c', where=where)
+  
   #Fetch data from mysql
   fromdb = MySQLFunction.mysqlcommand(cmd)
 
@@ -55,7 +97,7 @@ def fetchdata(where='',freqtype='binnum'):
 
   return (xarr,yarr,data)
 
-def makeplot(where='',freqtype='binnum',vlim=(-1,-1), tslim=(-1,-1),saveplot=''):
+def makeplot(xarr,yarr,data,where='',freqtype='binnum',vlim=(-1,-1), tslim=(-1,-1),saveplot=''):
    """Method to produce the three panel
    dynamic spectrum plot. The main panel
    is a pcolormesh figure of data with
@@ -85,9 +127,6 @@ def makeplot(where='',freqtype='binnum',vlim=(-1,-1), tslim=(-1,-1),saveplot='')
    Figure instance
    """
    import numpy, pylab, jd2gd, MySQLFunction, command
-
-   #Use fetchdata to get xarr, yarr, and data
-   xarr, yarr, data = fetchdata(where=where, freqtype=freqtype)
 
    #Calculate the time series and average bandpass
    #  for the subpanel plots

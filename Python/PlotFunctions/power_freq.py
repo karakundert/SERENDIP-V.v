@@ -1,3 +1,37 @@
+import sys
+
+def main(freqtype='topo',specid=1,dolog='False',where='',saveplot=''):
+  """ Fetches the coarse spectrum and event power data for 
+  the input parameters and plots them. 
+  
+  freq_type is either 'topo' or 'bary'. The default is 'topo'
+
+  specid is the specid to be plotted. If no value is 
+  assigned, data from the first specid will be plotted.
+
+  where is an optional string to further modify which hits 
+  are plotted.only include columns from table "hit". do not 
+  include the word 'where' or the semicolon at the end. all 
+  other syntax rules apply.
+
+  if dolog='True', the power on the y-axis will be logarithmic
+
+  saveplot='' allows you to save the plot by inputting its name as a 
+  string. if left blank, no plot is saved
+
+  returns a figure instance. """
+  
+  #Get data
+  hitfreq, eventpower, coarsespec_freq, coarsepowers = fetchdata(freq_type=freqtype,specid=specid,where=where)
+  
+  #Plot data
+  fig = makeplot(hitfreq=hitfreq,eventpower=eventpower,coarsespec_freq=coarsespec_freq,coarsepowers=coarsepowers,specid=specid,dolog=dolog,saveplot=saveplot)
+  
+  return fig
+
+if __name__=="__main__":
+  main()
+
 def fetchdata(freq_type='topo', specid=1, where='',writedata='False'):
   """ Fetches the coarse spectrum and event power data for 
   the input parameters. 
@@ -54,7 +88,7 @@ def fetchdata(freq_type='topo', specid=1, where='',writedata='False'):
   
   #Separate data into component arrays
   length = len(data)
-  freq = numpy.asarray([data[x][0] for x in range(length)])
+  hitfreq = numpy.asarray([data[x][0] for x in range(length)])
   eventpower = numpy.asarray([data[x][1] for x in range(length)])
   
   blob = allelse[0][0]
@@ -72,13 +106,17 @@ def fetchdata(freq_type='topo', specid=1, where='',writedata='False'):
     numpy.savetxt('CoarseSpec_%d.txt' %specid,(coarsespec_freq,coarsepowers))
     numpy.savetxt('Hits_%d.txt' %specid,(freq,eventpower))
 
-  return (freq, eventpower, coarsespec_freq, coarsepowers)
+  return (hitfreq, eventpower, coarsespec_freq, coarsepowers)
 
-def makeplot(freq_type='topo',specid=1,where='',dolog ='False',saveplot=''):
-  """Uses the command.fetchdata function to gather frequency data for 
-  a single specid, then plots both coarse power as a blue line and 
-  event power as red X's on the same figure. x-axis is converted to MHz
-  
+def makeplot(hitfreq,eventpower,coarsespec_freq,coarsepowers,specid=1,dolog='False',saveplot=''):
+  """Plots both coarse power (for coarse spectrum) as a blue line 
+  and event power (for hits) as red X's on the same figure. 
+
+  hitfreq is a list of frequencies for hits in a spectrum, eventpower
+  is a list of the eventpowers, coarsespec_freq is a list of
+  frequencies for the coarse spectra bins, and coarsepowers
+  is a list of the powers in each bin.   
+
   freq_type is either 'topo' or 'bary' (default is topo)
 
   specid is the value of the specid desired
@@ -97,11 +135,6 @@ def makeplot(freq_type='topo',specid=1,where='',dolog ='False',saveplot=''):
   
   import pylab, numpy, MySQLFunction, jd2gd, math
 
-  #Fetch data using fetchdata
-  freq, eventpower, coarsespec_freq, coarsepowers = fetchdata(freq_type,specid,where)
-
-  #Plot coarse spectrum and hits
-
   #Initialize figure
   fig=pylab.figure(figsize=(12,7))
   ax1 = fig.add_axes([0.1, 0.12, 0.85, 0.75])
@@ -109,11 +142,11 @@ def makeplot(freq_type='topo',specid=1,where='',dolog ='False',saveplot=''):
   #Log or not?
   if dolog=='True':
     pylab.semilogy(coarsespec_freq/1000000,coarsepowers,'b')
-    pylab.semilogy(freq/1000000,eventpower,'rx')
+    pylab.semilogy(hitfreq/1000000,eventpower,'rx')
     power = '(Logarithmic)' # affects y-axis label
   elif dolog=='False':
     pylab.plot(coarsespec_freq/1000000,coarsepowers,'b')
-    pylab.plot(freq/1000000,eventpower,'rx')
+    pylab.plot(hitfreq/1000000,eventpower,'rx')
     power = ''
   
   #Get additional info for text header

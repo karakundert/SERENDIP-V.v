@@ -1,4 +1,41 @@
-def fetchdata(where='',cumulative='False',savedata=''):
+import sys
+
+def main(where='',cumulative='False', dolog='False',saveplot=''):
+  """ Fetches data for a histogram of hits per mean power bin
+  and plot them.
+
+  where is a string to include additional information to 
+  narrow the results. typically it will be used to specify a 
+  range of specids. each column name MUST be prefixed with 
+  the first letter of the table name and a period, like 
+  c.obstime. don't forget to include 'h.specid=c.specid if 
+  referencing config and hit. do not include the word 'where' 
+  at the beginning or the semicolon at the end. all other common 
+  mysql syntax rules apply. Ex: 'h.specid>1 and h.specid<=20 and 
+  c.beamnum!=8 and c.specid=h.specid'. 
+
+  setting cumulative='True' makes a cumulative histogram as mean
+  power increases.
+
+  setting dolog='True' makes the y-axis (count) logarithmic
+
+  saveplot allows the user to have the figure saved by 
+  inputting the file name. if left empty, no file will be saved
+
+  returns a figure instance. """
+
+  #Get data
+  bins,count = fetchdata(where=where,cumulative=cumulative,dolog=dolog)
+  
+  #Plot data
+  fig = makeplot(where=where,bins=bins,count=count,dolog=dolog,cumulative=cumulative,saveplot=saveplot)
+  
+  return fig
+
+if __name__=="__main__":
+  main()
+  
+def fetchdata(where='',cumulative='False',dolog='False',savedata=''):
   """ Fetches data for a histogram of hits per mean power bin.
 
   where is a string to include additional information to 
@@ -38,28 +75,31 @@ def fetchdata(where='',cumulative='False',savedata=''):
     data = numpy.array([x[0] for x in data])
 
     #Create linearly spaced bins
-    bins = list(numpy.linspace(min(data),500,21))
+    bins = list(numpy.linspace(50,500,91))
     bins.append(max(data))
 
     #Histogram data
     count,bins = numpy.histogram(data,bins)
     
+    #Normalize data if not log
+    if dolog!='True':
+     norml = float(numpy.sum(count))
+     count = [x/norml for x in count]
+
     #Cumulative?
-    count_new = []
     if cumulative=='True':
-      for i,x in enumerate(count):
-        count_new.insert(i,x+sum(count[:i]))
-      count = count_new
+      count = list(numpy.cumsum(count))
   
     #Save data?
     if savedata!='':
       numpy.savetxt('%s' %savedata,(bins,count))
   
-  else bins,count=[],[]
+  
+  else: bins,count=[],[]
  
   return (bins,count)
   
-def makeplot(where='',cumulative='False',dolog='False',saveplot=''):
+def makeplot(bins,count,where='',dolog='False',cumulative='False',saveplot=''):
   """Creates histogram of hits per mean power bin.
 
   where is a string to include additional information to 
@@ -83,9 +123,6 @@ def makeplot(where='',cumulative='False',dolog='False',saveplot=''):
   returns a figure"""
 
   import pylab, MySQLFunction, command, jd2gd, math, numpy
-
-  #Fetch data for histogram
-  bins,count = fetchdata(where=where,cumulative=cumulative)
 
   #Data to plot?
   if len(bins) != 0:
@@ -117,10 +154,8 @@ def makeplot(where='',cumulative='False',dolog='False',saveplot=''):
    #Cumulative?
    if cumulative != 'True':  
      cumltv = ''
-     hitcount = sum(count)
    else:  
      cumltv = '(Cumulative)'
-     hitcount = count[-1]
 
    #Set axes limits
    v = [min(bins),500+width,var,max(count)*1.1]
@@ -189,7 +224,6 @@ def makeplot(where='',cumulative='False',dolog='False',saveplot=''):
    date2 = end[0]+' '+dates[int(end[1])-1]+' '+end[2]+' '+end[3]+':'+end[4]+':'+end[5][:2]
 
    #Add text to figure
-   pylab.figtext(0.1,.97,'Hit Count: %s' %hitcount)
    pylab.figtext(0.1,.945,'SpecID Count: %s' %speccount)
    pylab.figtext(0.95,.97,'Start: %s' %date1, ha='right')
    pylab.figtext(0.95,.945,'End:   %s' %date2, ha='right')
@@ -241,5 +275,5 @@ def loop(interval=1,start=55678,end=55688):
       name = 'meanpower_hist_from_%s_to_%s_beam%i.png'%(obstime_l,obstime_h,x)
       
       #Execute script
-      makeplot(where,cumulative,dolog,name)
+      main(where=where,cumulative=cumulative,dolog=dolog,saveplot=name)
     
