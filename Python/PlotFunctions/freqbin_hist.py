@@ -193,7 +193,7 @@ def makeplot(bins,count,freq_type='topo',increment_log=7,where='h.specid<100',do
       cmd = command.generate('specid,obstime,AGC_Time','config')
     elif 'c.' not in where:
       where = where + ' and h.specid=c.specid'
-    cmd = command.generate('c.specid,c.obstime,c.AGC_Time','config c, hit h',where=where)
+    cmd = command.generate('c.specid,c.obstime','config c, hit h',where=where)
   
     #Send command to mysql, return results
     data = MySQLFunction.mysqlcommand(cmd)
@@ -201,9 +201,7 @@ def makeplot(bins,count,freq_type='topo',increment_log=7,where='h.specid<100',do
     #Separate into arrays
     length = len(data)
     specid = [data[x][0] for x in range(length)]
-    day = numpy.asarray([data[x][1] for x in range(length)])
-    fracday = numpy.asarray([float(data[x][2])/86400000 for x in range(length)])
-    time = day + fracday  
+    time = numpy.asarray([data[x][1] for x in range(length)])
 
     #Get hit count and specid count
     uniq_IDs = set(specid)

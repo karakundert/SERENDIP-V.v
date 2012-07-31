@@ -1,3 +1,33 @@
+import sys
+
+def main(where='',figtype='cart',saveplot=''):
+  """ Makes a plot of RA and DEC.
+
+  where is a string specifying which data from mysql to grab. 
+  ONLY include columns from table 'config'. do not include 
+  the word 'where' at the beginning or the semicolon at the 
+  end. all other common mysql syntax rules apply.
+
+  figtype is the figure type. default is 'cart' for cartesian 
+  coordinates. 'sky' plots the ra and dec as a Mollweide
+  projection
+
+  saveplot allows the user to have the figure saved by 
+  inputting the file name. if left empty, no file will be saved
+
+  returns a figure instance. """
+
+  #Get data
+  ra,dec,specid = fetchdata(where)
+  
+  #Plot data
+  fig = makeplot(ra,dec,specid,where,figtype,saveplot)
+  
+  return fig
+
+if __name__=="__main__":
+  main()
+
 def fetchdata(where='', savedata=''):
   """Retrieves mysql data for RA and DEC.
 
@@ -34,9 +64,8 @@ def fetchdata(where='', savedata=''):
 
   return(ra,dec,specid)
 
-def makeplot(where='',figtype='sky',saveplot=''):
-  """ Makes a plot of RA and DEC after using fetchdata to 
-  obtain the values for each.
+def makeplot(ra,dec,specid,where='',figtype='cart',saveplot=''):
+  """ Makes a plot of RA and DEC.
 
   where is a string specifying which data from mysql to grab. 
   ONLY include columns from table 'config'. do not include 
@@ -55,26 +84,21 @@ def makeplot(where='',figtype='sky',saveplot=''):
 
   import pylab, numpy, jd2gd, command, MySQLFunction, math, astroconvert
 
-  #Use fetchdata to obtain arrays
-  ra, dec, specid = fetchdata(where)
-  
   #Determine values to include in figure
   var1 = min(specid)
   var2 = max(specid)
   var3 = len(specid)
 
   #Get time info from database
-  cmd = command.generate('obstime,AGC_Time','config',where=where)
+  cmd = command.generate('obstime','config',where=where)
   data = MySQLFunction.mysqlcommand(cmd)
 
   #Create list
   day = numpy.asarray([data[x][0] for x in xrange(len(data))])
-  fracday = numpy.asarray([float(data[x][1])/86400000 for x in xrange(len(data))])
-  time = day+fracday
 
   #Determine start and end dates
-  start = min(time)
-  end = max(time)
+  start = min(day)
+  end = max(day)
  
   #Create Gregorian date from obstime
   start = jd2gd.caldate(start)
@@ -103,8 +127,8 @@ def makeplot(where='',figtype='sky',saveplot=''):
     end[5] = '0' + end[5]
 
   #Compile date strings
-  date1 = start[0]+' '+dates[int(start[1])-1]+' '+start[2]+' '+start[3]+':'+start[4]+':'+start[5][:2]
-  date2 = end[0]+' '+dates[int(end[1])-1]+' '+end[2]+' '+end[3]+':'+end[4]+':'+end[5][:2]
+  date1 = start[0]+' '+dates[int(start[1])-1]+' '+start[2]+' '+start[3]+':'+start[4]+':'+start[5][:4]
+  date2 = end[0]+' '+dates[int(end[1])-1]+' '+end[2]+' '+end[3]+':'+end[4]+':'+end[5][:4]
 
   #Which fig type?
   if figtype=='cart':
@@ -137,11 +161,12 @@ def makeplot(where='',figtype='sky',saveplot=''):
     ax1 = fig.add_axes([.1,.12,.70,.85],projection='mollweide')
     
     #Plot data
-    ax1.scatter(ra,dec,label='spectra',marker='+')
+    ax1.scatter(ra,dec,label='spectra',marker='+',c='b')
     
     #Set xtick labels
     ax1.set_xticklabels(['2','4','6','8','10','12','14','16','18','20','22'])
 
+  #Create galactic plane lines
   #Create l,b arrays
   b = [math.radians(5)]*360 + [math.radians(-5)]*360
   l = list(numpy.linspace(0,2*numpy.pi,360))*2
@@ -176,8 +201,8 @@ def makeplot(where='',figtype='sky',saveplot=''):
   pylab.figtext(0.1,.97,'First Specid: %d' %var1)
   pylab.figtext(0.1,.945,'Last Specid: %d' %var2)
   pylab.figtext(0.1,.92,'Count: %d spectra' %var3)
-  pylab.figtext(0.95,.97,'Start: %s' %date1, ha='right')
-  pylab.figtext(0.95,.945,'End:   %s' %date2, ha='right')
+  pylab.figtext(0.95,.97,' Start: %s' %date1, ha='right')
+  pylab.figtext(0.95,.945,'End: %s' %date2, ha='right')
 
   #Include grid
   pylab.grid(True)
@@ -186,58 +211,5 @@ def makeplot(where='',figtype='sky',saveplot=''):
   if saveplot!='':
     pylab.savefig('%s'%saveplot)
 
-  return fig
-
-def loop(interval=1,start=55678,end=55688,beams='False'):
-  """ Loops through data in the database
-  and makes plots during specific times over specific intervals.
-
-  interval is the length of time for data to be included in each 
-  plot, measured in days.
-
-  start is the modified julian date at which to begin the looping,
-  and end is time at which to terminate the looping
-
-  plots are also further subdivided into individual beams. plots 
-  are saved with auto-incremented names."""
-
-  import numpy
-
-  #User ok with inputs?
-  temp = raw_input('Defaults: \nFigure Type: Sky \nIs this ok? y/n  ')
-  if temp=='n':
-    fig_type = raw_input('Figure Type: cart/sky  ')
-  else: fig_type='sky'
-
-  #Set loop limits
-  limits = numpy.arange(start,end+interval,interval)
-  loops = len(limits)-1
- 
-  #Execute loop
-  for x in xrange(loops):
-    
-   #Determine time bounds
-   obstime_l = limits[x]
-   obstime_h = limits[x+1]
-    
-   if beams=='True':
-
-    for x in xrange(14):
-      #Create where modifier based on user inputs
-      where = 'obstime>=%f and obstime<%f and beamnum=%i' %(obstime_l,obstime_h,x)
-
-      #Create plot name
-      name = 'radec_from_%s_to_%s_beam%i.png'%(obstime_l,obstime_h,x)
-      
-      #Execute script
-      makeplot(where,fig_type,name)
-   elif beams=='False':
-
-      #Create where modifier based on user inputs
-      where = 'obstime>=%f and obstime<%f' %(obstime_l,obstime_h)
-
-      #Create plot name
-      name = '/home/jburt/Desktop/ra_dec/radec_from_%s_to_%s.png'%(obstime_l,obstime_h)
-      
-      #Execute script
-      makeplot(where,fig_type,name)
+  pylab.show()
+  return

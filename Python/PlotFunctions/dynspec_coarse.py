@@ -66,7 +66,7 @@ def fetchdata(where='',freqtype='binnum'):
   #Create command to send to database
   if ('c.specid=s.specid' or 's.specid=c.specid') not in where:
    where = where + ' and c.specid=s.specid'
-  cmd = command.generate('s.coarsespec,c.obstime,c.AGC_Time,c.IF1_rfFreq','spec s, config c', where=where)
+  cmd = command.generate('s.coarsespec,c.obstime,c.IF1_rfFreq','spec s, config c', where=where)
   
   #Fetch data from mysql
   fromdb = MySQLFunction.mysqlcommand(cmd)
@@ -74,12 +74,11 @@ def fetchdata(where='',freqtype='binnum'):
   #Create arrays from data
   length = len(fromdb)
   coarsespec = [fromdb[x][0] for x in xrange(length)]
-  day = numpy.array([fromdb[x][1] for x in xrange(length)])
-  fracday = numpy.asarray([float(fromdb[x][2])/86400000 for x in xrange(length)])
+  time = numpy.array([fromdb[x][1] for x in xrange(length)])
   
   #Freq type?
   if freqtype=='topo':
-    rfFreq = fromdb[0][3]
+    rfFreq = fromdb[0][2]
     RFLO = rfFreq - 50000000
     yarr = numpy.linspace(RFLO, RFLO+200000000, 4096)
     yarr = yarr / 1000000
@@ -87,7 +86,6 @@ def fetchdata(where='',freqtype='binnum'):
     yarr = numpy.arange(1,4097,1)
   
   #Create seconds array
-  time = day+fracday
   time = time-min(time)
   xarr = time*86400
 

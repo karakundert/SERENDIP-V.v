@@ -70,7 +70,7 @@ def fetchdata(where='',freqtype='topo',savedata=''):
   # generate mysql command
   if ('c.specid=h.specid' or 'h.specid=c.specid') not in where:
     where = where + ' and c.specid=h.specid'
-  cmd = command.generate('h.eventpower,%s,c.obstime,c.AGC_Time'%freqtype,'hit h, config c',where=where)
+  cmd = command.generate('h.eventpower,%s,c.obstime'%freqtype,'hit h, config c',where=where)
 
   # send command to database and return results
   data = MySQLFunction.mysqlcommand(cmd)
@@ -82,11 +82,9 @@ def fetchdata(where='',freqtype='topo',savedata=''):
     freq = numpy.asarray([data[x][1]/1000000 for x in xrange(length)])
   elif freqtype=='h.binnum': 
     freq=numpy.asarray([data[x][1] for x in xrange(length)])
-  day = numpy.array([data[x][2] for x in xrange(length)])
-  fracday = numpy.asarray([float(data[x][3])/86400000 for x in xrange(length)])
+  time = numpy.array([data[x][2] for x in xrange(length)])
 
   # create seconds array
-  time = day+fracday
   time = time-min(time)
   time = time*86400
 

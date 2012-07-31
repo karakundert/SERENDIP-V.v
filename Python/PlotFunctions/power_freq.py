@@ -150,12 +150,11 @@ def makeplot(hitfreq,eventpower,coarsespec_freq,coarsepowers,specid=1,dolog='Fal
     power = ''
   
   #Get additional info for text header
-  cmd = 'select beamnum, ra, decl, obstime, AGC_Time,IF1_rfFreq from config where specid=%d' %specid
+  cmd = 'select beamnum, ra, decl, obstime,IF1_rfFreq from config where specid=%d' %specid
   data = MySQLFunction.mysqlcommand(cmd)
   
   #Combine systime with obstime to get complete time
-  frac = float(float(data[0][4])/86400000)
-  obstime = data[0][3] + frac
+  obstime = data[0][3]
 
   #Create Gregorian date from obstime
   gd = jd2gd.caldate(obstime)
@@ -177,7 +176,7 @@ def makeplot(hitfreq,eventpower,coarsespec_freq,coarsepowers,specid=1,dolog='Fal
   date = gd[0] + ' ' + dates[int(gd[1])-1] + ' ' + gd[2] + ' ' + gd[3] + ':' + gd[4] + ':' + gd[5][:2]
 
   #Calculate center frequency
-  rfFreq=int(data[0][5])
+  rfFreq=int(data[0][4])
   rfFreq = rfFreq/1000000
   rfFreq = rfFreq-50
   cfreq = rfFreq + 100

@@ -202,15 +202,13 @@ def makeplot(bins,count,maximum=24,histtype='fracmax',where='',saveplot=''):
    #Get extra info for plot
    if 'c.' not in where:
      where = where + ' and h.specid=c.specid'
-   cmd = command.generate('c.specid,c.obstime,c.AGC_Time','config c, hit h',where=where)
+   cmd = command.generate('c.specid,c.obstime','config c, hit h',where=where)
    data = MySQLFunction.mysqlcommand(cmd)
   
    #Separate into arrays
    length = len(data)
    specid = numpy.asarray([data[x][0] for x in range(length)])
-   day = numpy.asarray([data[x][1] for x in range(length)])
-   fracday = numpy.asarray([float(data[x][2])/86400000 for x in range(length)])
-   time = day + fracday  
+   time = numpy.asarray([data[x][1] for x in range(length)])
 
    #Get specid count
    uniq_IDs = set(specid)
