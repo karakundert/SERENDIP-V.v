@@ -173,8 +173,6 @@ def makeplot(eventpower,freq,time,where='',freqtype='topo',vlim=(-1,-1),frac=0.9
   length = len(data)
   specid = [data[x][0] for x in xrange(length)]
   day = numpy.asarray([data[x][1] for x in xrange(length)])
-  fracday = numpy.asarray([float(data[x][2])/86400000 for x in xrange(length)])
-  time = day + fracday  
 
   # get specid and hit count
   uniq_IDs = set(specid)
@@ -182,8 +180,8 @@ def makeplot(eventpower,freq,time,where='',freqtype='topo',vlim=(-1,-1),frac=0.9
   hitcount = len(eventpower)
 
   # determine start and end dates
-  start = min(time)
-  end = max(time)
+  start = min(day)
+  end = max(day)
  
   # create Gregorian date from obstime
   start = jd2gd.caldate(start)
@@ -216,14 +214,14 @@ def makeplot(eventpower,freq,time,where='',freqtype='topo',vlim=(-1,-1),frac=0.9
   date2 = end[0]+' '+dates[int(end[1])-1]+' '+end[2]+' '+end[3]+':'+end[4]+':'+end[5][:2]
 
   # add text to figure
-  pylab.figtext(0.4,.975,'Spectra Count: %s' %speccount)
-  pylab.figtext(0.4,.95,'Hit Count: %s' %hitcount)
-  pylab.figtext(0.61,.975,'Vmax: %s' %vlim[1])
-  pylab.figtext(0.61,.95,'Vmin: %s' %vlim[0])
-  pylab.figtext(0.8,.975,'Max Power: %s' %max(eventpower))
-  pylab.figtext(0.8,.95,'Min Power: %s' %min(eventpower))
-  pylab.figtext(0.1,.975,'Start: %s' %date1)
-  pylab.figtext(0.1,.95,'End:   %s' %date2)
+  pylab.figtext(0.4,.96,'Spectra Count: %s' %speccount)
+  pylab.figtext(0.4,.935,'Hit Count: %s' %hitcount)
+  pylab.figtext(0.61,.96,'Vmax: %s' %vlim[1])
+  pylab.figtext(0.61,.935,'Vmin: %s' %vlim[0])
+  pylab.figtext(0.8,.96,'Max Power: %s' %max(eventpower))
+  pylab.figtext(0.8,.935,'Min Power: %s' %min(eventpower))
+  pylab.figtext(0.1,.96,'Start: %s' %date1)
+  pylab.figtext(0.1,.935,'End:   %s' %date2)
 
   # save plot?
   if saveplot != '':
