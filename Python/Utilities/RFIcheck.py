@@ -30,17 +30,19 @@ def check(spec_init,spec_final,filename,algorithm):
    
    #Create query
    query = 'select hitid from hit where specid>=%s and specid<%s and topocentric_freq>%s and topocentric_freq<%s;' %(vals[y],vals[y+1],bounds[0],bounds[1])
-
+   print query
    #Get hitids where rfi_found
    data = MySQLFunction.mysqlcommand(query)
    data = [str(x[0]) for x in data]
 
    #Update rfi_found
-   where_string = ', '.join([z for z in data])
-   query = "UPDATE hit SET rfi_found = +%s WHERE hitid in (%s)" %(num,where_string)
-   MySQLFunction.mysqlcommand(query)
-   print 'rfi_found updated'
- 
+   if len(data) > 0:
+      where_string = ', '.join([z for z in data])
+      query = "UPDATE hit SET rfi_found = +%s WHERE hitid in (%s)" %(num,where_string)
+      MySQLFunction.mysqlcommand(query)
+      print 'rfi_found updated'
+   else:
+      print 'no rfi found'
    #Update rfi_checked
    query = 'UPDATE hit SET rfi_checked = +%s WHERE specid>=%s and specid<%s;' %(num,vals[y],vals[y+1])
    MySQLFunction.mysqlcommand(query)
