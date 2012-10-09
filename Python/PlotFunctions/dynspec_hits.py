@@ -94,7 +94,7 @@ def fetchdata(where='',freqtype='topo',savedata=''):
 
   return (eventpower,freq,time)
 
-def makeplot(eventpower,freq,time,where='',freqtype='topo',vlim=(-1,-1),frac=0.9,saveplot=''):
+def makeplot(eventpower,freq,time,errbar=[0], where='',freqtype='topo',vlim=(-1,-1),frac=0.9,saveplot=''):
   """Produces a 'confetti plot' of spectra dynamically. 
 
   freqtype is the frequency type, either 'binnum', 'bary', or 
@@ -140,6 +140,9 @@ def makeplot(eventpower,freq,time,where='',freqtype='topo',vlim=(-1,-1),frac=0.9
   size = [.1 if eventpower[x]<cutoff else 1 for x in xrange(len(eventpower))]
 
   # plot data
+  if len(errbar)>1:
+    size=20
+    pylab.errorbar(time,freq,xerr=errbar,fmt=None,ecolor='k', capsize=0.0)
   pylab.scatter(time,freq,s=size,c=eventpower,edgecolors='none',vmin=vlim[0],vmax=vlim[1])
 
   # set axes limits
