@@ -145,9 +145,6 @@ def makeplot(eventpower,freq,time,errbar=[0], where='',freqtype='topo',vlim=(-1,
     pylab.errorbar(time,freq,xerr=errbar,fmt=None,ecolor='k', capsize=0.0)
   pylab.scatter(time,freq,s=size,c=eventpower,edgecolors='none',vmin=vlim[0],vmax=vlim[1])
 
-  # set axes limits
-  v = [0,max(time),min(freq),max(freq)]
-  pylab.axis(v)
 
   # add grid
   pylab.grid(True,which='both')
@@ -165,7 +162,7 @@ def makeplot(eventpower,freq,time,errbar=[0], where='',freqtype='topo',vlim=(-1,
 
   # gather additional info
   if where=='':
-    cmd = command.generate('specid,obstime,AGC_Time','config')
+    cmd = command.generate('specid,obstime,AGC_Time,IF1_rfFreq','config')
   elif 'c.' not in where:
     where = where + ' and h.specid=c.specid'
     cmd = command.generate('h.specid,c.obstime,c.AGC_Time','hit h, config c',where=where)
@@ -185,7 +182,21 @@ def makeplot(eventpower,freq,time,errbar=[0], where='',freqtype='topo',vlim=(-1,
   # determine start and end dates
   start = min(day)
   end = max(day)
- 
+
+  # calculate the min and max RF from the center freq
+  # scale y axis accordinly 
+  rflo=data[0][3]-50e6
+  rfhi=rflo+200e6
+
+  # guess whether data is given in Hz or MHz
+  if numpy.log10(freq[0])<4:
+    rflo/=1e6
+    rfhi/=1e6
+
+  # set axes limits
+  v = [0,max(time),rflo,rfhi]
+  pylab.axis(v)
+
   # create Gregorian date from obstime
   start = jd2gd.caldate(start)
   end = jd2gd.caldate(end)
