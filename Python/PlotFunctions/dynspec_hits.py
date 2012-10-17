@@ -165,7 +165,10 @@ def makeplot(eventpower,freq,time,errbar=[0], where='',freqtype='topo',vlim=(-1,
     cmd = command.generate('specid,obstime,AGC_Time,IF1_rfFreq','config')
   elif 'c.' not in where:
     where = where + ' and h.specid=c.specid'
-    cmd = command.generate('h.specid,c.obstime,c.AGC_Time','hit h, config c',where=where)
+    cmd = command.generate('h.specid,c.obstime,c.AGC_Time,c.IF1_rfFreq','hit h, config c',where=where)
+  else:
+    where = where + ' and h.specid=c.specid'
+    cmd = command.generate('h.specid,c.obstime,c.AGC_Time,c.IF1_rfFreq','hit h, config c',where=where)
 
   data = MySQLFunction.mysqlcommand(cmd)
   
@@ -185,8 +188,12 @@ def makeplot(eventpower,freq,time,errbar=[0], where='',freqtype='topo',vlim=(-1,
 
   # calculate the min and max RF from the center freq
   # scale y axis accordinly 
-  rflo=data[0][3]-50e6
+  rfctr=float(data[0][3])
+  rflo=rfctr-50e6
   rfhi=rflo+200e6
+  rflo-=5e6    #Add offsets to get hits away from plot edges
+  rfhi+=5e6
+  print rflo, rfhi
 
   # guess whether data is given in Hz or MHz
   if numpy.log10(freq[0])<4:
@@ -230,8 +237,8 @@ def makeplot(eventpower,freq,time,errbar=[0], where='',freqtype='topo',vlim=(-1,
   # add text to figure
   pylab.figtext(0.4,.96,'Spectra Count: %s' %speccount)
   pylab.figtext(0.4,.935,'Hit Count: %s' %hitcount)
-  pylab.figtext(0.61,.96,'Vmax: %s' %vlim[1])
-  pylab.figtext(0.61,.935,'Vmin: %s' %vlim[0])
+  pylab.figtext(0.61,.96,'Vmin,Vmax: %s %s' % (vlim[0], vlim[1]))
+  pylab.figtext(0.61,.935,'ALFA RFctr: %4.1f' % (rfctr/1e6))
   pylab.figtext(0.8,.96,'Max Power: %s' %max(eventpower))
   pylab.figtext(0.8,.935,'Min Power: %s' %min(eventpower))
   pylab.figtext(0.1,.96,'Start: %s' %date1)
