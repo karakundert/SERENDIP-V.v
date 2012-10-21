@@ -1,6 +1,6 @@
 import sys
 
-def main(freqtype='topo',specid=1,dolog='False',where='',saveplot=''):
+def main(freqtype='topo',specid=1,dolog='False',dotext=True,where='',saveplot=''):
   """ Fetches the coarse spectrum and event power data for 
   the input parameters and plots them. 
   
@@ -22,10 +22,10 @@ def main(freqtype='topo',specid=1,dolog='False',where='',saveplot=''):
   returns a figure instance. """
   
   #Get data
-  hitfreq, eventpower, coarsespec_freq, coarsepowers = fetchdata(freq_type=freqtype,specid=specid,where=where)
+  hitfreq, eventpower, rfi_found, coarsespec_freq, coarsepowers = fetchdata(freq_type=freqtype,specid=specid,where=where)
   
   #Plot data
-  fig = makeplot(hitfreq=hitfreq,eventpower=eventpower,coarsespec_freq=coarsespec_freq,coarsepowers=coarsepowers,specid=specid,dolog=dolog,saveplot=saveplot)
+  fig = makeplot(hitfreq=hitfreq,eventpower=eventpower,rfi_found=rfi_found, coarsespec_freq=coarsespec_freq,coarsepowers=coarsepowers,specid=specid,dolog=dolog,dotext=dotext,saveplot=saveplot)
   
   return fig
 
@@ -66,7 +66,7 @@ def fetchdata(freq_type='topo', specid=1, where='',writedata='False'):
     freq_type = 'barycentric_freq'
 
   #Create strings to put in command function
-  col_name1 = '%s, eventpower' % freq_type
+  col_name1 = '%s, eventpower, rfi_found' % freq_type
   table_name1 = 'hit'
   where1 = 'specid=%d' % specid
   
@@ -90,6 +90,7 @@ def fetchdata(freq_type='topo', specid=1, where='',writedata='False'):
   length = len(data)
   hitfreq = numpy.asarray([data[x][0] for x in range(length)])
   eventpower = numpy.asarray([data[x][1] for x in range(length)])
+  rfi_found = numpy.asarray([data[x][2] for x in range(length)])
   
   blob = allelse[0][0]
   rfFreq = allelse[0][1]
@@ -106,9 +107,9 @@ def fetchdata(freq_type='topo', specid=1, where='',writedata='False'):
     numpy.savetxt('CoarseSpec_%d.txt' %specid,(coarsespec_freq,coarsepowers))
     numpy.savetxt('Hits_%d.txt' %specid,(freq,eventpower))
 
-  return (hitfreq, eventpower, coarsespec_freq, coarsepowers)
+  return (hitfreq, eventpower, rfi_found, coarsespec_freq, coarsepowers)
 
-def makeplot(hitfreq,eventpower,coarsespec_freq,coarsepowers,specid=1,dolog='False',saveplot=''):
+def makeplot(hitfreq,eventpower,rfi_found,coarsespec_freq,coarsepowers,specid=1,dolog='False', dotext=True, saveplot=''):
   """Plots both coarse power (for coarse spectrum) as a blue line 
   and event power (for hits) as red X's on the same figure. 
 
@@ -135,22 +136,11 @@ def makeplot(hitfreq,eventpower,coarsespec_freq,coarsepowers,specid=1,dolog='Fal
   
   import pylab, numpy, MySQLFunction, jd2gd, math
 
-  #Initialize figure
-  fig=pylab.figure(figsize=(12,7))
-  ax1 = fig.add_axes([0.1, 0.12, 0.85, 0.75])
-  
-  #Log or not?
-  if dolog=='True':
-    pylab.semilogy(coarsespec_freq/1000000,coarsepowers,'b')
-    pylab.semilogy(hitfreq/1000000,eventpower,'rx')
-    power = '(Logarithmic)' # affects y-axis label
-  elif dolog=='False':
-    pylab.plot(coarsespec_freq/1000000,coarsepowers,'b')
-    pylab.plot(hitfreq/1000000,eventpower,'rx')
-    power = ''
-  
+#  pylab.rc('text', usetex=True)
+#  pylab.rc('font', family='serif') 
+
   #Get additional info for text header
-  cmd = 'select beamnum, ra, decl, obstime,IF1_rfFreq from config where specid=%d' %specid
+  cmd = 'select beamnum, ra, decl, obstime, IF1_rfFreq, thrscale from config where specid=%d' %specid
   data = MySQLFunction.mysqlcommand(cmd)
   
   #Combine systime with obstime to get complete time
@@ -189,13 +179,37 @@ def makeplot(hitfreq,eventpower,coarsespec_freq,coarsepowers,specid=1,dolog='Fal
     newbeam = beamnum + 'a'
   else: newbeam = beamnum + 'b'
 
+  #thrscale
+  thrscale=float(data[0][5])/4.0
+
+  #PLOTTING
+  #Initialize figure
+  fig=pylab.figure(figsize=(12,7))
+  ax1 = fig.add_axes([0.1, 0.12, 0.85, 0.75])
+
+  #Divide into RFI flagged or not
+  ginds=numpy.where(rfi_found==0)[0]
+  rinds=numpy.where(rfi_found>0)[0]  
+  coarsepowers/=thrscale
+
+  #Log or not?
+  if dolog=='True':
+    pylab.semilogy(coarsespec_freq/1000000,coarsepowers,'k')
+    pylab.semilogy(hitfreq[rinds]/1000000,eventpower[rinds],'rx')
+    pylab.semilogy(hitfreq[ginds]/1000000,eventpower[ginds],'bx')
+  elif dolog=='False':
+    pylab.plot(coarsespec_freq/1000000,coarsepowers,'k')
+    pylab.plot(hitfreq[rinds]/1000000,eventpower[rinds],'rx')
+    pylab.plot(hitfreq[ginds]/1000000,eventpower[ginds],'bx')
+ 
   #Add text to figure
-  pylab.figtext(0.1,.97,'Beam: %s' % newbeam)
-  pylab.figtext(0.3,.97,'RA: %s' %data[0][1])
-  pylab.figtext(0.5,.97,'Dec: %s' %data[0][2])
-  pylab.figtext(0.95,.97,'Date: %s' %date, ha='right')
-  pylab.figtext(0.1,.92,'Hit Count: %s' %len(eventpower))
-  pylab.figtext(0.95,.92,'Center Freq: %s MHz' %cfreq, ha='right')
+  if dotext:
+    pylab.figtext(0.1,.97,'Beam: %s' % newbeam)
+    pylab.figtext(0.3,.97,'RA: %s' %data[0][1])
+    pylab.figtext(0.5,.97,'Dec: %s' %data[0][2])
+    pylab.figtext(0.95,.97,'Date: %s' %date, ha='right')
+    pylab.figtext(0.1,.92,'Hit Count: %s' %len(eventpower))
+    pylab.figtext(0.95,.92,'Center Freq: %s MHz' %cfreq, ha='right')
   
   #Set x-scale
   lowbound = cfreq - 100
@@ -207,9 +221,9 @@ def makeplot(hitfreq,eventpower,coarsespec_freq,coarsepowers,specid=1,dolog='Fal
   for i in ax1.get_xticklabels(): i.set_rotation(45)
 
   #Set labels and title
-  pylab.xlabel('Frequency (MHz)')
-  pylab.ylabel('Power %s' %power)
-  pylab.title(' Coarse Spectrum and Hits for Specid=%d' %specid)
+  pylab.xlabel('Frequency (MHz)', size=14)
+  pylab.ylabel('Power (arb units)', size=14)
+#  pylab.title(' Coarse Spectrum and Hits for Specid=%d' %specid)
   
   #Set axis limits
   if len(eventpower) != 0:
