@@ -30,7 +30,7 @@ def update(spec_init,spec_final):
    vec=numpy.sqrt(numpy.power(delta_ra,2)+numpy.power(delta_dec,2))
 
    #Calculate drift rate
-   diff = specid[1]-specid[0]
+   diff = specid[1:]-specid[:-1]
    time = .67108864*diff
    driftrate = vec/time
    
