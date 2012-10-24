@@ -1,14 +1,17 @@
 def update(algorithm,spec1,spec2):
- """Checks database for consecutive occurrences
+ """
+ Checks database for consecutive occurrences
  of the same beam and flags them in rfi_found.
- Input is the algorithm number, an integer between
- 0 and 7, inclusive, and spec1/2, the first and last 
- spectra to check. rfi_found and rfi_checked are then
- updated in the database to reflect the results. """
+
+ Inputs: 
+ algorithm: an integer between 0 and 7, inclusive
+ spec1: the first spectrum to be checked
+ spec2: the last spectrum to be checked
+ """
 
  import MySQLFunction, numpy, sys
 
- #Compute value to add
+ #Compute RFI value
  num = 2**algorithm
 
  #Create query and grab beamnums
@@ -16,7 +19,6 @@ def update(algorithm,spec1,spec2):
  data = MySQLFunction.mysqlcommand(cmd)
  data = [y[0] for y in data]
  length = len(data)
- 
  
  #Create list of values to loop through
  vals = list(numpy.arange(1,length,10000))
