@@ -1,0 +1,22 @@
+Procedure to follow upon loading new data into database:
+
+1. Update Obstime
+ a) run obstime.reset() to create a list of tuples of mjd integer values and associated specids
+ b) use MySQLFunction.mysqlcommand() with the input string 'select AGC_Systime, AGC_Time from config;'
+ c) run obstime.interpolate() with the two inputs being the outputs from parts a) and b)
+
+2. Flag hits which occurred in known RFI zones
+ a) run RFIcheck.check() with the inputs being the first specid to be checked, the final specid to 
+ be checked, the filename of the .txt file with the list of RFI bands, and the algorithm number (use 0)
+
+3. Flag hits which occurred near the edges of the band
+ a) run meanpowercheck.check() with the inputs being the first specid to be checked, the final specid to 
+ be checked, the filename of the .txt file with the list of cutoffs for each beam, and the algorithm
+ number (use 1)
+
+4. Flag hits where the beam number appears to have stalled
+ a) run beamerrorcheck.update() with the inputs being the algorithm number (use 2), the first specid to be checked, and the final specid to be checked.
+
+5. Update reserved column with the observing type
+ a) run observingtype.update() wih the inputs being the first specid to be checked and the final specid
+ to be checked
