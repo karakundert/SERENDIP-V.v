@@ -1,6 +1,34 @@
-def update(spec_init,spec_final):
+import MySQLFunction, numpy, math, sys
 
- import MySQLFunction, numpy, math, sys
+def main(start,end):
+  """An algorithm to determine and update
+  observing type in the database. Interval is 
+  looped over in increments of 250000 spectra.
+
+  Inputs:
+  start - first specid in range to update
+  end - last specid in range to update 
+  """
+
+  #Determine limits for each loop
+  limits=numpy.arange(start,end,250000)
+  limits=numpy.append(limits,end)
+
+  #Perform loop
+  for x in range(len(limits)-1):
+
+   #Determine and update observing type for current range
+   update(limits[x],limits[x+1])
+
+   #Display progress
+   print 'completed interval %s of %s' %(x+1,len(limits)-1) 
+  
+  return
+
+if __name__=="__main__":
+  main()
+
+def update(spec_init,spec_final):
 
  for beam in range(14):
 

@@ -1,9 +1,7 @@
 Procedure to follow upon loading new data into database:
 
 1. Update Obstime
- a) run obstime.reset() to create a list of tuples of mjd integer values and associated specids
- b) use MySQLFunction.mysqlcommand() with the input string 'select AGC_Systime, AGC_Time from config;'
- c) run obstime.interpolate() with the two inputs being the outputs from parts a) and b)
+ a) run obstime.main() with the inputs being (startspecid,endspecid)
 
 2. Flag hits which occurred in known RFI zones
  a) run RFIcheck.check() with the inputs being the first specid to be checked, the final specid to 

@@ -1,49 +1,70 @@
-def reset():
- """ Determines mjd integer value for each spectrum based on AGC_SysTime.
- Returns list of tuples, each with specid and mjd integer."""
+import sys, numpy, MySQLFunction, math
 
- import MySQLFunction, gd2jd, time
+def main(start,end):
+  """An algorithm to interpolate and update
+  obstime values in the database. Interval is 
+  looped over in increments of 500000 spectra.
+
+  Inputs:
+  start - first specid in range to update
+  end - last specid in range to update 
+  """
+
+  #Determine limits for each loop
+  limits=numpy.arange(start,end,500000)
+  limits=numpy.append(limits,end)
+
+  #Perform loop
+  for x in range(len(limits)-1):
+
+   #Grab data in current range
+   data = grabdata(limits[x],limits[x+1])
+  
+   #Interpolate and update data in current range
+   interpolate(data)
+
+   #Display progress
+   print 'completed interval %s of %s' %(x+1,len(limits)-1) 
+  
+  return
+
+if __name__=="__main__":
+  main()
+
+def grabdata(start,end):
+ """ Grabs mjd value, specid, AGC_SysTime and AGC_Time from
+ config table in given range. Output is the correct format
+ for the interpolate function.
+
+ Inputs:
+ start - first specid in range to update
+ end - last specid in range to update 
+
+ Output:
+ data - array of obstime,specid,AGC_Systime,and AGC_Time, in tuples
+ """
  
- #Grab SysTimes
- data = MySQLFunction.mysqlcommand('select AGC_SysTime,specid from config;')
+ #Grab values from database
+ cmd = 'select obstime,specid,AGC_SysTime,AGC_Time from config where specid>=%s and specid<=%s;' %(start,end)
+ data = numpy.array(MySQLFunction.mysqlcommand(cmd))
+
+ return data
+
+def interpolate(data):
+ """Does the interpolation and loads the data into the database. 
+ Input: data - the output from the grabdata function """
+
+ #Convert data to four arrays
+ obstime,specid,systime,time=numpy.transpose(data)
  
- #Create lists
- datarray = [x[0] for x in data]
- specid = [x[1] for x in data]
- 
- #Create tuples of year, month, day in Gregorian format
- tuples = [(time.gmtime(x)[0],time.gmtime(x)[1],time.gmtime(x)[2]) for x in datarray]
-
- #Convert to mjd integer values
- mjd = [(str(specid[x]),int(gd2jd.julian_date(tuples[x][0],tuples[x][1],tuples[x][2],0,0,0))) for x in xrange(len(tuples))]
-
- return mjd
-
-def interpolate(mjd,data):
- """Does the interpolation and loads the data into the database. Inputs are
- mjd, the output from reset(), and data, which is a list of tuples of
- AGC_SysTime and AGC_Time for each spectrum in the database."""
-
- import numpy, math, MySQLFunction
-
- #Remove data from tuples
- length = len(data)
- systime = [data[x][0] for x in xrange(length)]
- time = [data[x][1] for x in xrange(length)]
- obstime = [x[1] for x in mjd]
- specid = [x[0] for x in mjd]
- 
- #Calculate difference
- diff = [int(systime[x+1]-systime[x]) for x in xrange(length-1)]
+ #Calculate difference in systime
+ diff = systime[1:]-systime[:-1]
 
  #Find discontinuities in observing
- disc = []
- for x in range(length-1):
-  if diff[x]>=2:
-   disc.append(x+1) 
-
- disc.insert(0,0)
- disc.append(length)
+ disc = numpy.where(diff>=2)[0]
+ disc=disc+1
+ disc=numpy.insert(disc,0,0)
+ disc=numpy.append(disc,len(systime))
  
  #Initialize obstime array
  obstime_new = []
@@ -100,23 +121,14 @@ def interpolate(mjd,data):
     obstime_new.append(y)
 
  #Create tuples of specid and obstime to be returned   
- output = [[str(specid[x]),repr(obstime_new[x])] for x in xrange(length)]
+ output = [[str(specid[x]),repr(obstime_new[x])] for x in xrange(len(data))]
 
- #Loop through output in increments of 50000
-
- lim = list(numpy.arange(0,len(output),50000))
- lim.append(len(output)+1)
-
- for x in range(len(lim)-1):
-  print '%s of %s' %(x,len(lim)-1)
-  output_temp = output[lim[x]:lim[x+1]]
- 
-  #Create mysql query
-  conditions_string = '\n'.join(["WHEN %s THEN %5.14s" %(x,y) for x,y in output_temp])
-  where_string = ', '.join([z[0] for z in output_temp])
-  query = "UPDATE config \nSET obstime = CASE specid \n%s \nEND \nWHERE specid in (%s)" %(conditions_string,where_string)
+ #Create mysql query
+ conditions_string = '\n'.join(["WHEN %s THEN %5.14s" %(x,y) for x,y in output])
+ where_string = ', '.join([z[0] for z in output])
+ query = "UPDATE config \nSET obstime = CASE specid \n%s \nEND \nWHERE specid in (%s)" %(conditions_string,where_string)
   
-  #Send query to database
-  MySQLFunction.mysqlcommand(query)
+ #Send query to database
+ MySQLFunction.mysqlcommand(query)
 
  return
