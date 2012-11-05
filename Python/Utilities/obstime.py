@@ -11,7 +11,7 @@ def main(start,end):
   """
 
   #Determine limits for each loop
-  limits=numpy.arange(start,end,50000)
+  limits=numpy.arange(start,end,500000)
   limits=numpy.append(limits,end)
 
   #Perform loop
