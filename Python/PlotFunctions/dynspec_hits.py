@@ -193,8 +193,7 @@ def makeplot(eventpower,freq,time,errbar=[0], where='',freqtype='topo',vlim=(-1,
   rfhi=rflo+200e6
   rflo-=5e6    #Add offsets to get hits away from plot edges
   rfhi+=5e6
-  print rflo, rfhi
-
+  
   # guess whether data is given in Hz or MHz
   if numpy.log10(freq[0])<4:
     rflo/=1e6
@@ -203,6 +202,7 @@ def makeplot(eventpower,freq,time,errbar=[0], where='',freqtype='topo',vlim=(-1,
   # set axes limits
   v = [0,max(time),rflo,rfhi]
   pylab.axis(v)
+  if min(freq)<rflo or max(freq)>rfhi: print "WARNING: There are hits outside freq limits"
 
   # create Gregorian date from obstime
   start = jd2gd.caldate(start)
@@ -249,3 +249,49 @@ def makeplot(eventpower,freq,time,errbar=[0], where='',freqtype='topo',vlim=(-1,
     pylab.savefig('%s' %saveplot)
 
   return fig
+
+def clusterplot(clclean, cllist, sidlist, saveplot=''):
+    import matplotlib.pyplot as py
+    import numpy
+    from MySQLFunction import mysqlcommand
+    from time import gmtime, asctime
+
+    CI,SI,TF,EP,CW,CB=0,1,2,3,4,5
+
+    fig=py.figure(figsize=(12,7))
+    ax = fig.add_axes([0.1, 0.14, 0.85, 0.75])
+
+    #Add the full list of clusters
+    ax.plot(cllist[SI]+cllist[CW]/2, cllist[TF]/1e6, marker=',', color='#E8E8E8', linestyle='None')
+
+    #Add "cleaned" clusters
+    ax.errorbar(clclean[SI]+clclean[CW]/2, clclean[TF]/1e6, xerr=clclean[CW]/2, fmt=None, capsize=0)
+    ax.scatter(clclean[SI]+clclean[CW]/2, clclean[TF]/1e6, s=10, c=clclean[CB], \
+        vmin=0, vmax=6, edgecolors='None')
+
+    for sid in sidlist:
+        ax.axvline(sid, linestyle=':', color='Black')
+
+    #Get info
+    cmd='select AGC_SysTime, IF1_rfFreq from config where specid=%d' % sidlist[0]
+    systime,rfctr=numpy.array(mysqlcommand(cmd)).transpose()
+    systime=int(systime)
+    rfctr=float(rfctr)/1e6+50
+
+    sidlo,sidhi=min(cllist[SI]),max(cllist[SI])
+    date1=asctime(gmtime(systime - 4*3600))
+    date2=asctime(gmtime(systime - 4*3600 + 0.671*(sidhi-sidlo)))
+    py.figtext(0.1,.96,'Start: %s' %date1)
+    py.figtext(0.1,.935,'End:   %s' %date2)
+    py.figtext(0.61,.96,'RFctr: %4.1f' % rfctr)
+
+    #Set plot properties
+    ax.set_xlim((sidlo, sidhi))
+    ax.set_ylim((rfctr-105, rfctr+105))
+
+    ax.set_xlabel('Specid')
+    ax.set_ylabel('Frequency (MHz)')
+
+    if saveplot != '': py.savefig(saveplot)
+
+    return fig
