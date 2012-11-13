@@ -7,14 +7,22 @@ Procedure to follow upon loading new data into database:
  a) run RFIcheck.check() with the inputs being the first specid to be checked, the final specid to 
  be checked, the filename of the .txt file with the list of RFI bands, and the algorithm number (use 0)
 
+ Example: RFIcheck.check(0, 15000, 'RFIsources.txt', 0)
+
 3. Flag hits which occurred near the edges of the band
  a) run meanpowercheck.check() with the inputs being the first specid to be checked, the final specid to 
  be checked, the filename of the .txt file with the list of cutoffs for each beam, and the algorithm
  number (use 1)
 
+ Example: meanpowercheck(0, 15000, 'meanpowercutoffs.txt', 1)
+
 4. Flag hits where the beam number appears to have stalled
  a) run beamerrorcheck.update() with the inputs being the algorithm number (use 2), the first specid to be checked, and the final specid to be checked.
 
+ Example: beamerrorcheck.update(2, 0, 5000)
+ 
 5. Update reserved column with the observing type
  a) run observingtype.update() wih the inputs being the first specid to be checked and the final specid
  to be checked
+
+  Example: observingtype.update(0, 15000)
