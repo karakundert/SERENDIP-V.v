@@ -3,7 +3,8 @@ import sys, numpy, MySQLFunction, math
 def main(start,end):
   """An algorithm to interpolate and update
   obstime values in the database. Interval is 
-  looped over in increments of 500000 spectra.
+  interpolated in increments of 500000 spectra
+  but updated in increments of 50000.
 
   Inputs:
   start - first specid in range to update
@@ -20,8 +21,11 @@ def main(start,end):
    #Grab data in current range
    data = grabdata(limits[x],limits[x+1])
   
-   #Interpolate and update data in current range
-   interpolate(data)
+   #Interpolate data in current range
+   output=interpolate(data)
+
+   #Update data in current range
+   update(output)
 
    #Display progress
    print 'completed interval %s of %s' %(x+1,len(limits)-1) 
@@ -123,12 +127,28 @@ def interpolate(data):
  #Create tuples of specid and obstime to be returned   
  output = [[str(specid[x]),repr(obstime_new[x])] for x in xrange(len(data))]
 
- #Create mysql query
- conditions_string = '\n'.join(["WHEN %s THEN %5.14s" %(x,y) for x,y in output])
- where_string = ', '.join([z[0] for z in output])
- query = "UPDATE config \nSET obstime = CASE specid \n%s \nEND \nWHERE specid in (%s)" %(conditions_string,where_string)
-  
- #Send query to database
- MySQLFunction.mysqlcommand(query)
+ return output
 
- return
+def update(output):
+ """Takes output from interpolate and updates
+ database in increments of 50000."""
+
+ #Determine limits for each loop
+ limits=numpy.arange(0,len(output),50000)
+ limits=numpy.append(limits,len(output))
+
+ #Perform loop
+ for x in range(len(limits)-1):
+
+  #Select output data in current range
+  output_temp = output(limits[x]:limits[x+1])
+
+  #Create mysql query
+  conditions_string = '\n'.join(["WHEN %s THEN %5.14s" %(x,y) for x,y in output_temp])
+  where_string = ', '.join([z[0] for z in output_temp])
+  query = "UPDATE config \nSET obstime = CASE specid \n%s \nEND \nWHERE specid in (%s)" %(conditions_string,where_string)
+  
+  #Send query to database
+  MySQLFunction.mysqlcommand(query)
+
+return
