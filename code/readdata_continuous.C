@@ -34,6 +34,7 @@ int main(int argc, char** argv)
     int value;
     int pfb_bin = 0;
     int fft_bin = 0;
+    int fft_bin_loc= 0;
     int over_thresh = 0;
     int blank = 0;
     int event = 0;
@@ -114,6 +115,10 @@ int main(int argc, char** argv)
         headersize = read(fd, (void *) header, DR_HEAER_SIZE);
 	fileposition+=headersize;
 
+//        int iii=0;
+//        for(iii=0; iii<DR_HEAER_SIZE; iii++)
+//            printf("%c", header[iii]);
+
 	//get the size of spectra and parse header values
         next_buffer_size = read_header(header);
 
@@ -122,26 +127,26 @@ int main(int argc, char** argv)
 	//Read in data
         datasize = read(fd, (void *) data, next_buffer_size);
 	fileposition+=datasize;
-/*
-	int iii=0;
-	printf("Printing data header\n");
-	for(iii=0; iii<SETI_HEADER_SIZE_IN_BYTES; iii++)
-		printf("%c", data[iii]);
-*/
+
+//        printf("Buffersize, datasize: %d %d\n", next_buffer_size, datasize);
+//	int iii=0;
+//	printf("Printing data header\n");
+//	for(iii=0; iii<datasize; iii++)
+//		printf("%c", data[iii]);
+
 	//Parse data header
         beamnum = read_beam(data, datasize);
         read_data_header(data, &frame);
 
 	//Convert to RA and Dec
         scramAzZatoRaDec(frame.agc_systime, frame.agc_time, frame.agc_az, frame.agc_za, 
-                frame.alfashm_alfamotorposition, beamnum, 0, &frame.ra, &frame.dec,  &hittime);
+                frame.alfashm_alfamotorposition, beamnum/2, 0, &frame.ra, &frame.dec,  &hittime);
 
 	get_filename(argv[1], rawfile);
 	printf("%s\n", rawfile);
 
 	//Calculate MJD
 	spec_time = time2mjd(frame.agc_systime, frame.agc_time);
-	spec_time = (double) ((int) spec_time);
 
         // creates query to config table
         // set digital_lo and board to be constants, because we figured we knew
@@ -149,7 +154,7 @@ int main(int argc, char** argv)
         char bid[] = "B2";
         sprintf(sqlquery, "INSERT INTO config (thrscale, thrlimit, fftshift, pfbshift, beamnum, obstime, ra, decl, digital_lo, board, AGC_SysTime, AGC_Time, AGC_Az, AGC_Za, AlfaFirstBias, AlfaSecondBias, AlfaMotorPosition, IF1_rfFreq, synI_freqHz, IF1_synI_ampDB, IF1_if1FrqMHz, IF1_alfaFb, TT_TurretEncoder, TT_TurretDegrees, rawfile) VALUES (%ld, %ld, %ld, %ld, %d, %lf, %lf, %lf, %ld, '%s', %ld, %ld, %lf, %lf, %ld, %ld, %lf, %9.1lf, %9.1lf, %ld, %lf, %ld, %ld, %lf, '%s')", 
                 frame.thrscale, frame.thrlimit, frame.fft_shift, frame.pfb_shift,
-                beamnum, spec_time, frame.ra, frame.dec, 200000000, bid, frame.agc_systime, frame.agc_time, 
+                beamnum, (double) ((int) spec_time), frame.ra, frame.dec, 200000000, bid, frame.agc_systime, frame.agc_time, 
                 frame.agc_az, frame.agc_za, frame.alfashm_alfafirstbias, frame.alfashm_alfasecondbias, 
                 frame.alfashm_alfamotorposition, frame.if1_rffreq, frame.if1_syni_freqhz_0, frame.if1_syni_ampdb_0, 
                 frame.if1_if1frqmhz, frame.if1_alfafb, frame.tt_turretencoder, frame.tt_turretdegrees, rawfile);
@@ -210,7 +215,8 @@ int main(int argc, char** argv)
         rfctr = frame.if1_rffreq - 50000000.0;
 	//Right edge of the last bin is the lowest freq
 	//because the RF band is flipped in the IF
-	rfmin=rfctr-0.5*fscoarse;
+//	rfmin=rfctr-0.5*fscoarse;
+        rfmin=rfctr+0.5*fscoarse;
 
 	//Check to see if there are too many hits
 	if(num_records>0.9*frame.thrlimit*4096) {
@@ -237,9 +243,12 @@ int main(int argc, char** argv)
 	    //1) Reorder the FFT output order
 	    //2) Reverse bins due to RF/IF flip
             pfb_bin = (pfb_bin + 2048) % 4096;
-	    pfb_bin = 4096 - pfb_bin;
+//	    pfb_bin = 4096 - pfb_bin;
+	    pfb_bin = 4095 - pfb_bin;
 	    fft_bin = (fft_bin + 16384) % 32768;
-	    fft_bin = 32768 - fft_bin;
+//	    fft_bin = 32768 - fft_bin;
+	    fft_bin = 32767 - fft_bin;
+            fft_bin_loc = fft_bin;
             fft_bin+=pfb_bin*32768;
 
 	    freq_fft_bin =  rfmin + fstep*fft_bin;
@@ -267,13 +276,13 @@ int main(int argc, char** argv)
 	    }
 
 	   //populate coarse bin power
-	    if(fft_bin%16384 == 0)
+	    if(fft_bin_loc==16383)
 	    {
                 spectra.coarse_spectra[pfb_bin] = value;
 	    }
 
             //Only generate string and insert into database if hit valid
-	    if(fft_bin%16384 != 0 && goodfreq==1 && gooddata==1)
+	    if(fft_bin_loc!=16383 && goodfreq==1 && gooddata==1)
 	    {
 //                spectra.hits[ctr_numhits][0] = value;  
 //                spectra.hits[ctr_numhits][1] = fft_bin;  
