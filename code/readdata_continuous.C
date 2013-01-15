@@ -57,6 +57,7 @@ int main(int argc, char** argv)
     long int fileposition=0;   //position in input file
     long int filesize;   //position in input file
 
+    FILE *fout;
     //create buffers
     struct spectral_data spectra;
 
@@ -143,7 +144,7 @@ int main(int argc, char** argv)
                 frame.alfashm_alfamotorposition, beamnum/2, 0, &frame.ra, &frame.dec,  &hittime);
 
 	get_filename(argv[1], rawfile);
-	printf("%s\n", rawfile);
+//	printf("%s\n", rawfile);
 
 	//Calculate MJD
 	spec_time = time2mjd(frame.agc_systime, frame.agc_time);
@@ -223,6 +224,9 @@ int main(int argc, char** argv)
 	    gooddata=0;
 	    fprintf(stderr, "Data bad...more than %5.0lf hits.\n",  0.9*frame.thrlimit*4096);
 	}
+
+//****OPEN FILE TO WRITE HITS TO
+        fout=fopen("hits_list.txt", "w");
 //============================
 //         LOOP OVER HITS
 //=============================
@@ -295,15 +299,19 @@ int main(int argc, char** argv)
                 //Prepare mysql query to insert hits
                 sprintf(hitquery, "INSERT INTO hit (eventpower, meanpower, binnum, topocentric_freq, barycentric_freq, specid) VALUES (%f, %e, %d, %lf, %lf, %ld)", (double) value, (double) spectra.coarse_spectra[pfb_bin], fft_bin, freq_fft_bin, bary_freq, specid);
 
+                //Write row to tmp file
+                fprintf(fout, "\\N\t %f\t %e\t %d\t %lf\t %lf\t 0\t 0\t 0\t 0\t 0\t %ld\t \n", (double) value, (double) spectra.coarse_spectra[pfb_bin], fft_bin, freq_fft_bin, bary_freq, specid);
+/*
 #ifndef DEBUG
                 // insert header data into serendipvv config table
                 if (mysql_query(conn, hitquery)) {
                     fprintf(stderr, "Error inserting data into sql database... \n");
                     exiterr(3);
                 }
-#endif
+#endif */
 
             }
+
             // fill spectraldata with available data and close file
 //            fprintf(datatext, "%d, %d, %d, %e, %f, %d\n", k, beamnum, pfb_bin, (double) spectra.coarse_spectra[pfb_bin], (double) value, fft_bin);
 	
@@ -311,6 +319,17 @@ int main(int argc, char** argv)
 	    data_ptr++;
 	    ctr++;		
 	}//for(i=0; i<num_records; i++)
+
+        fclose(fout);
+
+        sprintf(hitquery, "LOAD DATA LOCAL INFILE 'hits_list.txt' INTO TABLE hit");
+//        printf("%s\n", hitquery);
+
+        if (mysql_query(conn, hitquery)) {
+            fprintf(stderr, "Error inserting data into sql database... \n");
+            exiterr(3);
+        }
+
 //        fclose(datatext);
 #ifndef DEBUG
        if(load_blob(conn, specid, spectra.coarse_spectra)!=0)

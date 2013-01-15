@@ -27,6 +27,7 @@ long read_data(char * data, int datasize)
 
     fprintf(stderr, "record ct %ld beam no %ld\n", record_count, beam_no);
     //fprintf(stderr, &data[16]);
+
     return record_count;
 }
 
