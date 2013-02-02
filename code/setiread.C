@@ -285,7 +285,7 @@ int read_data_header(char *data, struct setidata *frame)
 	TENGE IP: 167772161
      */
 
-
+    if(strncmp(fields[0+offset], "BEE2_STATUS:", strlen("BEE2_STATUS:"))) fprintf(stderr, "Couldn't read BEE2 header - loading defaults\n");
     if(sscanf(fields[1+offset], "PFB SHIFT: %ld", & frame->pfb_shift) == 0) frame->pfb_shift = 268435455; 
     if(sscanf(sscanf(fields[2+offset], "FFT SHIFT: %ld", & frame->fft_shift) == 0) frame->fftshift = 28398;
     if(sscanf(fields[3+offset], "THRESH LIMIT: %ld", & frame->thrlimit)) == 0) frame->thrlimit = 25;
