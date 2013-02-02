@@ -265,11 +265,33 @@ int read_data_header(char *data, struct setidata *frame)
 	offset=0;
     else
 	offset=1;
-    assert(strncmp(fields[0+offset], "BEE2_STATUS:", strlen("BEE2_STATUS:")));
-    assert(sscanf(fields[1+offset], "PFB SHIFT: %ld", & frame->pfb_shift));
-    assert(sscanf(fields[2+offset], "FFT SHIFT: %ld", & frame->fft_shift));
-    assert(sscanf(fields[3+offset], "THRESH LIMIT: %ld", & frame->thrlimit));
-    assert(sscanf(fields[4+offset], "THRESH SCALE: %ld", & frame->thrscale));
+
+
+    /* looks like occasionally we didn't get any status details from the BEE */
+    /* in this case, the dr2 pushed garbage into these bytes, so we'll ammend */
+    /* the code below to throw a warning but load defaults if necessary      */
+    //assert(strncmp(fields[0+offset], "BEE2_STATUS:", strlen("BEE2_STATUS:")));
+    //assert(sscanf(fields[1+offset], "PFB SHIFT: %ld", & frame->pfb_shift));
+    //assert(sscanf(fields[2+offset], "FFT SHIFT: %ld", & frame->fft_shift));
+    //assert(sscanf(fields[3+offset], "THRESH LIMIT: %ld", & frame->thrlimit));
+    //assert(sscanf(fields[4+offset], "THRESH SCALE: %ld", & frame->thrscale));
+    /*
+	BEE2 STATUS: Tue Aug 25 18:46:40 AST 2009
+	PFB SHIFT: 268435455
+	FFT SHIFT: 28398
+	THRESH LIMIT: 25
+	THRESH SCALE: 96
+	TENGE PORT: 33001
+	TENGE IP: 167772161
+     */
+
+
+    if(sscanf(fields[1+offset], "PFB SHIFT: %ld", & frame->pfb_shift) == 0) frame->pfb_shift = 268435455; 
+    if(sscanf(sscanf(fields[2+offset], "FFT SHIFT: %ld", & frame->fft_shift) == 0) frame->fftshift = 28398;
+    if(sscanf(fields[3+offset], "THRESH LIMIT: %ld", & frame->thrlimit)) == 0) frame->thrlimit = 25;
+    if(sscanf(fields[4+offset], "THRESH SCALE: %ld", & frame->thrscale) == 0) frame->thrscale = 96;
+
+
 
     // TEMP: check that data retrieval is working by comparing equivalent variables
 /*    printf("frame.pfb_shift %ld\n", frame->pfb_shift);
